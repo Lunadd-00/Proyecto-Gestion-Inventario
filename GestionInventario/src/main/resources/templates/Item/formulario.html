@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{general/fragmentos :: head}"/>
+
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"/>
+
+        <main class="container">
+
+            <h2>
+                <span th:if="${item.id != null}">Editar Item</span>
+                <span th:unless="${item.id != null}">Nuevo Item</span>
+            </h2>
+
+            <form th:action="@{/item/guardar}" th:object="${item}" method="post">
+                <input type="hidden" th:field="*{id}"/>
+
+                <div class="mb-2">
+                    <label>Nombre *</label>
+                    <input type="text" th:field="*{nombre}" class="form-control"/>
+                    <small class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
+                </div>
+
+                <div class="mb-2">
+                    <label>Descripción</label>
+                    <textarea th:field="*{descripcion}" class="form-control" rows="2"></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label>Categoria *</label>
+                        <select th:field="*{categoria.id}" class="form-select">
+                            <option value="">-- Seleccione --</option>
+                            <option th:each="cat : ${categorias}"
+                                    th:value="${cat.id}"
+                                    th:text="${cat.nombre}">
+                            </option>
+                        </select>
+                        <small class="text-danger" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></small>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label>Proveedor *</label>
+                        <select th:field="*{proveedor.id}" class="form-select">
+                            <option value="">-- Seleccione --</option>
+                            <option th:each="prov : ${proveedores}"
+                                    th:value="${prov.id}"
+                                    th:text="${prov.nombre}">
+                            </option>
+                        </select>
+                        <small class="text-danger" th:if="${#fields.hasErrors('proveedor')}" th:errors="*{proveedor}"></small>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <label>Stock *</label>
+                        <input type="number" th:field="*{stock}" class="form-control" min="0"/>
+                        <small class="text-danger" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></small>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label>Stock Mínimo *</label>
+                        <input type="number" th:field="*{stockMinimo}" class="form-control" min="0"/>
+                        <small class="text-danger" th:if="${#fields.hasErrors('stockMinimo')}" th:errors="*{stockMinimo}"></small>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label>Unidad de Medida *</label>
+                        <select th:field="*{unidadMedida}" class="form-select">
+                            <option value="">-- Seleccione --</option>
+                            <option value="Unidad">Unidad</option>
+                            <option value="Kit">Kit</option>
+                            <option value="Caja">Caja</option>
+                            <option value="Par">Par</option>
+                            <option value="Rollo">Rollo</option>
+                            <option value="Litro">Litro</option>
+                            <option value="Kilogramo">Kilogramo</option>
+                            <option value="Metro">Metro</option>
+                            <option value="Galón">Galón</option>
+                            <option value="Paquete">Paquete</option>
+                        </select>
+                        <small class="text-danger" th:if="${#fields.hasErrors('unidadMedida')}" th:errors="*{unidadMedida}"></small>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               id="tieneCaducidad" th:field="*{tieneCaducidad}"
+                               onchange="toggleFechaCaducidad(this)"/>
+                        <label class="form-check-label" for="tieneCaducidad">Posee fecha de caducidad</label>
+                    </div>
+                </div>
+
+                <div class="mb-2" id="divFechaCaducidad"
+                     th:style="${item.tieneCaducidad} ? 'display:block' : 'display:none'">
+                    <label>Fecha de Caducidad *</label>
+                    <input type="date" th:field="*{fechaCaducidad}" class="form-control"/>
+                    <small class="text-danger" th:if="${#fields.hasErrors('fechaCaducidad')}" th:errors="*{fechaCaducidad}"></small>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="activo" th:field="*{activo}"/>
+                        <label class="form-check-label" for="activo">Activo</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-outline-secondary">Guardar</button>
+                <a th:href="@{/item/listado}" class="btn btn-outline-secondary">Cancelar</a>
+
+            </form>
+
+        </main>
+
+        <footer th:replace="~{general/fragmentos :: footer}"/>
+
+        <script>
+            function toggleFechaCaducidad(checkbox) {
+                var div = document.getElementById('divFechaCaducidad');
+                var input = div.querySelector('input[type="date"]');
+                if (checkbox.checked) {
+                    div.style.display = 'block';
+                } else {
+                    div.style.display = 'none';
+                    input.value = '';
+                }
+            }
+        </script>
+    </body>
+</html>

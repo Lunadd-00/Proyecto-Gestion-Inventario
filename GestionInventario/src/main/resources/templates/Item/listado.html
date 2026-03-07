@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="~{general/fragmentos :: head}"/>
+
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"/>
+
+        <main class="container">
+
+            <h2>Lista de Ítems</h2>
+
+            <div th:replace="~{general/fragmentos :: mostrarToast}"/>
+
+            <form th:action="@{/item/listado}" method="get" class="mb-3">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <label>Categoría</label>
+                        <select name="idCategoria" class="form-select">
+                            <option value="">Todas</option>
+                            <option th:each="cat : ${categorias}"
+                                    th:value="${cat.id}"
+                                    th:text="${cat.nombre}"
+                                    th:selected="${cat.id != null and cat.id.equals(idCategoriaSeleccionada)}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Proveedor</label>
+                        <select name="idProveedor" class="form-select">
+                            <option value="">Todos</option>
+                            <option th:each="prov : ${proveedores}"
+                                    th:value="${prov.id}"
+                                    th:text="${prov.nombre}"
+                                    th:selected="${prov.id != null and prov.id.equals(idProveedorSeleccionado)}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Estado</label>
+                        <select name="activo" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="true"  th:selected="${activoSeleccionado != null and activoSeleccionado == true}">Activo</option>
+                            <option value="false" th:selected="${activoSeleccionado != null and activoSeleccionado == false}">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end gap-2">
+                        <button type="submit" class="btn btn-outline-secondary">Filtrar</button>
+                        <a th:href="@{/item/listado}" class="btn btn-outline-secondary">Limpiar</a>
+                    </div>
+                </div>
+            </form>
+
+            <p>Total: <strong th:text="${totalItems}"></strong></p>
+
+            <a th:href="@{/item/nuevo}" class="btn">Nuevo ítem</a>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Proveedor</th>
+                        <th>Stock</th>
+                        <th>Stock Mínimo</th>
+                        <th>Unidad</th>
+                        <th>Fecha Caducidad</th>
+                        <th>Activo</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(items)}">
+                        <td colspan="11">No hay ítems registrados.</td>
+                    </tr>
+                    <tr th:each="item, stat : ${items}">
+                        <td th:text="${stat.count}"></td>
+                        <td th:text="${item.nombre}"></td>
+                        <td th:text="${item.categoria.nombre}"></td>
+                        <td th:text="${item.proveedor.nombre}"></td>
+                        <td th:text="${item.stock}"></td>
+                        <td th:text="${item.stockMinimo}"></td>
+                        <td th:text="${item.unidadMedida}"></td>
+                        <td>
+                            <span th:if="${item.tieneCaducidad}" th:text="${#temporals.format(item.fechaCaducidad, 'dd/MM/yyyy')}"></span>
+                            <span th:unless="${item.tieneCaducidad}">Sin caducidad</span>
+                        </td>
+                        <td th:text="${item.activo} ? 'Sí' : 'No'"></td>
+                        <td>
+                            <a th:href="@{/item/modificar/{id}(id=${item.id})}">Editar</a>
+                        </td>
+                        <td>
+                            <form th:action="@{/item/eliminar}" method="post"
+                                  onsubmit="return confirm('¿Eliminar ' + [[${item.nombre}]] + '?')">
+                                <input type="hidden" name="idItem" th:value="${item.id}"/>
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </main>
+
+        <footer th:replace="~{general/fragmentos :: footer}"/>
+    </body>
+</html>
