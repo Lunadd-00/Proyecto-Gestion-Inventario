@@ -15,7 +15,6 @@
         <link th:href="@{/css/estilos.css}" rel="stylesheet"/>
     </head>
 
-    <!-- ================= HEADER ================= -->
     <header th:fragment="header" class="header">
 
         <!-- Navbar -->
@@ -43,10 +42,10 @@
                     </ul>
                     <div>
                         <a th:href="@{?lang=es}" 
-                           th:classappend="${#locale.language == 'es'} ? 'btn-primary' : 'btn-outline-light'" 
+                           th:classappend="${#locale.language == 'es'} ? 'btn-light' : 'btn-outline-light'" 
                            class="btn btn-sm me-1">ES</a>
                         <a th:href="@{?lang=en}" 
-                           th:classappend="${#locale.language == 'en'} ? 'btn-primary' : 'btn-outline-light'" 
+                           th:classappend="${#locale.language == 'en'} ? 'btn-light' : 'btn-outline-light'" 
                            class="btn btn-sm">EN</a>
                     </div>
                 </div>
@@ -54,15 +53,11 @@
         </nav>
     </header>
 
-    <!-- ================= FOOTER ================= -->
     <footer th:fragment="footer" class="footer text-white text-center p-3 mt-5">
         <p class="lead m-0">[[#{plantilla.derechos}]] &copy;</p>
     </footer>
 
-
-    <!-- ================= TOAST MENSAJES ================= -->
     <section th:fragment="mostrarToast">
-
         <div aria-live="polite"
              aria-atomic="true"
              class="position-fixed top-50 start-50 translate-middle"
@@ -115,6 +110,5 @@
             </div>
         </div>
     </section>
-
 </body>
 </html>

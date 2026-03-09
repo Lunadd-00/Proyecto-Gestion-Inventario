@@ -21,9 +21,8 @@
          aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header bg-info text-white">
+                <div class="modal-header bg-info">
                     <h5 class="modal-title">
-                        <i class="fa-solid fa-truck"></i>
                         [[#{proveedor.agregar}]]
                     </h5>
                     <button type="button"
@@ -109,7 +108,7 @@
                                                 th:data-bs-nombre="${p.nombre}">
                                             [[#{accion.eliminar}]]
                                         </button>
-                                        <a th:href="@{/proveedor/modificar/}+${p.id}" class=" btn btn-warning">
+                                        <a th:href="@{/proveedor/modificar/}+${p.id}" class=" btn btn-warning text-white">
                                             [[#{accion.actualizar}]]
                                         </a>
                                     </td>

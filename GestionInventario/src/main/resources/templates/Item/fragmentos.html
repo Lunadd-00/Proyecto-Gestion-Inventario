@@ -7,7 +7,7 @@
                     data-bs-toggle="modal"
                     data-bs-target="#agregarItemModal">
                 <i class="fa-solid fa-plus"></i>
-                Nuevo Ítem
+                [[#{item.nuevo}]]
             </button>
         </div>
     </div>
@@ -21,7 +21,7 @@
                 <div class="modal-header bg-info text-white">
                     <h5 class="modal-title">
                         <i class="fa-solid fa-box"></i>
-                        Agregar Ítem
+                        [[#{item.agregar}]]
                     </h5>
                     <button type="button"
                             class="btn-close"
@@ -34,18 +34,18 @@
                     <div class="modal-body">
 
                         <div class="mb-3">
-                            <label>Nombre *</label>
+                            <label>[[#{item.nombre}]] *</label>
                             <input type="text" class="form-control" name="nombre" required/>
                         </div>
 
                         <div class="mb-3">
-                            <label>Descripción</label>
+                            <label>[[#{item.descripcion}]]</label>
                             <textarea class="form-control" name="descripcion" rows="2"></textarea>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label>Categoría *</label>
+                                <label>[[#{item.categoria}]] *</label>
                                 <select class="form-select" name="categoria.id" required>
                                     <option value="">-- Seleccione --</option>
                                     <option th:each="cat : ${categorias}"
@@ -55,7 +55,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>Proveedor *</label>
+                                <label>[[#{item.proveedor}]] *</label>
                                 <select class="form-select" name="proveedor.id" required>
                                     <option value="">-- Seleccione --</option>
                                     <option th:each="prov : ${proveedores}"
@@ -68,15 +68,15 @@
 
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label>Stock *</label>
+                                <label>[[#{item.stock}]] *</label>
                                 <input type="number" class="form-control" name="stock" min="0" required/>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label>Stock Mínimo *</label>
+                                <label>[[#{item.stockMinimo}]] *</label>
                                 <input type="number" class="form-control" name="stockMinimo" min="0" required/>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label>Unidad de Medida *</label>
+                                <label>[[#{item.unidadMedida}]] *</label>
                                 <select class="form-select" name="unidadMedida" required>
                                     <option value="">-- Seleccione --</option>
                                     <option value="Unidad">Unidad</option>
@@ -99,13 +99,13 @@
                                        id="tieneCaducidadNuevo" name="tieneCaducidad"
                                        onchange="toggleFecha('tieneCaducidadNuevo', 'divFechaNuevo')"/>
                                 <label class="form-check-label" for="tieneCaducidadNuevo">
-                                    Posee fecha de caducidad
+                                    [[#{item.tieneCaducidad}]]
                                 </label>
                             </div>
                         </div>
 
                         <div class="mb-3" id="divFechaNuevo" style="display:none">
-                            <label>Fecha de Caducidad *</label>
+                            <label>[[#{item.fechaCaducidad}]] *</label>
                             <input type="date" class="form-control" name="fechaCaducidad"/>
                         </div>
 
@@ -113,7 +113,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox"
                                        id="activoNuevo" name="activo" checked/>
-                                <label class="form-check-label" for="activoNuevo">Activo</label>
+                                <label class="form-check-label" for="activoNuevo">[[#{item.activo}]]</label>
                             </div>
                         </div>
 
@@ -143,9 +143,9 @@
         <div class="col-md-9">
             <form th:action="@{/item/listado}" method="get" class="row g-2 align-items-end">
                 <div class="col-md-4">
-                    <label>Categoría</label>
+                    <label>[[#{item.categoria}]]</label>
                     <select name="idCategoria" class="form-select">
-                        <option value="">Todas</option>
+                        <option value="">[[#{item.todas}]]</option>
                         <option th:each="cat : ${categorias}"
                                 th:value="${cat.id}"
                                 th:text="${cat.nombre}"
@@ -154,9 +154,9 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label>Proveedor</label>
+                    <label>[[#{item.proveedor}]]</label>
                     <select name="idProveedor" class="form-select">
-                        <option value="">Todos</option>
+                        <option value="">[[#{item.todas}]]</option>
                         <option th:each="prov : ${proveedores}"
                                 th:value="${prov.id}"
                                 th:text="${prov.nombre}"
@@ -165,16 +165,16 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label>Estado</label>
+                    <label>[[#{item.estado}]]</label>
                     <select name="activo" class="form-select">
-                        <option value="">Todos</option>
-                        <option value="true"  th:selected="${activoSeleccionado != null and activoSeleccionado == true}">Activo</option>
-                        <option value="false" th:selected="${activoSeleccionado != null and activoSeleccionado == false}">Inactivo</option>
+                        <option value="">[[#{item.todos}]]</option>
+                        <option value="true"  th:selected="${activoSeleccionado != null and activoSeleccionado == true}">[[#{item.activo}]]</option>
+                        <option value="false" th:selected="${activoSeleccionado != null and activoSeleccionado == false}">[[#{item.inactivo}]]</option>
                     </select>
                 </div>
                 <div class="col-md-2 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Filtrar</button>
-                    <a th:href="@{/item/listado}" class="btn btn-secondary">Limpiar</a>
+                    <button type="submit" class="btn btn-primary">[[#{accion.filtrar}]]</button>
+                    <a th:href="@{/item/listado}" class="btn btn-secondary">[[#{accion.limpiar}]]</a>
                 </div>
             </form>
         </div>
@@ -184,7 +184,7 @@
         <div class="col-md-11">
             <div class="card p-2">
                 <div class="card-header">
-                    <h4>Lista de Ítems
+                    <h4>[[#{item.listado}]]
                         <span class="fs-6 fw-normal text-muted">
                             (Total: <span th:text="${totalItems}"></span>)
                         </span>
@@ -196,14 +196,14 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Nombre</th>
-                                    <th>Categoría</th>
-                                    <th>Proveedor</th>
-                                    <th>Stock</th>
-                                    <th>Stock Mín.</th>
-                                    <th>Unidad</th>
-                                    <th>Caducidad</th>
-                                    <th>Activo</th>
+                                    <th>[[#{item.nombre}]]</th>
+                                    <th>[[#{item.categoria}]]</th>
+                                    <th>[[#{item.proveedor}]]</th>
+                                    <th>[[#{item.stock}]]</th>
+                                    <th>[[#{item.stockMinimo}]]</th>
+                                    <th>[[#{item.unidadMedida}]]</th>
+                                    <th>[[#{item.caducidad}]]</th>
+                                    <th>[[#{item.activo}]]</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -218,7 +218,7 @@
                                     <td>[[${item.unidadMedida}]]</td>
                                     <td>
                                         <span th:if="${item.tieneCaducidad}" th:text="${#temporals.format(item.fechaCaducidad, 'dd/MM/yyyy')}"></span>
-                                        <span th:unless="${item.tieneCaducidad}">N/A</span>
+                                        <span th:unless="${item.tieneCaducidad}">[[#{item.noAplica}]]</span>
                                     </td>
                                     <td th:text="${item.activo} ? 'Sí' : 'No'"></td>
                                     <td>
@@ -281,19 +281,19 @@
                     <div class="card-body">
 
                         <div class="mb-3">
-                            <label>Nombre *</label>
+                            <label>[[#{item.nombre}]] *</label>
                             <input type="text" class="form-control" th:field="*{nombre}" required/>
                             <small class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
                         </div>
 
                         <div class="mb-3">
-                            <label>Descripción</label>
+                            <label>[[#{item.descripcion}]]</label>
                             <textarea class="form-control" th:field="*{descripcion}" rows="2"></textarea>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label>Categoría *</label>
+                                <label>[[#{item.categoria}]] *</label>
                                 <select th:field="*{categoria.id}" class="form-select" required>
                                     <option value="">-- Seleccione --</option>
                                     <option th:each="cat : ${categorias}"
@@ -304,7 +304,7 @@
                                 <small class="text-danger" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></small>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>Proveedor *</label>
+                                <label>[[#{item.proveedor}]] *</label>
                                 <select th:field="*{proveedor.id}" class="form-select" required>
                                     <option value="">-- Seleccione --</option>
                                     <option th:each="prov : ${proveedores}"
@@ -318,17 +318,17 @@
 
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label>Stock *</label>
+                                <label>[[#{item.stock}]] *</label>
                                 <input type="number" class="form-control" th:field="*{stock}" min="0" required/>
                                 <small class="text-danger" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></small>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label>Stock Mínimo *</label>
+                                <label>[[#{item.stockMinimo}]] *</label>
                                 <input type="number" class="form-control" th:field="*{stockMinimo}" min="0" required/>
                                 <small class="text-danger" th:if="${#fields.hasErrors('stockMinimo')}" th:errors="*{stockMinimo}"></small>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label>Unidad de Medida *</label>
+                                <label>[[#{item.unidadMedida}]] *</label>
                                 <select th:field="*{unidadMedida}" class="form-select" required>
                                     <option value="">-- Seleccione --</option>
                                     <option value="Unidad">Unidad</option>
@@ -352,14 +352,14 @@
                                        id="tieneCaducidadEdit" th:field="*{tieneCaducidad}"
                                        onchange="toggleFecha('tieneCaducidadEdit', 'divFechaEdit')"/>
                                 <label class="form-check-label" for="tieneCaducidadEdit">
-                                    Posee fecha de caducidad
+                                    [[#{item.tieneCaducidad}]]
                                 </label>
                             </div>
                         </div>
 
                         <div class="mb-3" id="divFechaEdit"
                              th:style="${item.tieneCaducidad} ? 'display:block' : 'display:none'">
-                            <label>Fecha de Caducidad *</label>
+                            <label>[[#{item.fechaCaducidad}]] *</label>
                             <input type="date" class="form-control" th:field="*{fechaCaducidad}"/>
                             <small class="text-danger" th:if="${#fields.hasErrors('fechaCaducidad')}" th:errors="*{fechaCaducidad}"></small>
                         </div>
@@ -368,7 +368,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox"
                                        id="activoEdit" th:field="*{activo}"/>
-                                <label class="form-check-label" for="activoEdit">Activo</label>
+                                <label class="form-check-label" for="activoEdit">[[#{item.activo}]]</label>
                             </div>
                         </div>
 

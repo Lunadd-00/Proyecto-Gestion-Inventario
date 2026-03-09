@@ -46,11 +46,11 @@ public class CategoriaController {
     }
 
     @PostMapping("/eliminar")
-    public String eliminar(@RequestParam Integer idCategoria, RedirectAttributes redirectAttributes) {
+    public String eliminar(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         String titulo = "todoOk";
         String detalle = "mensaje.eliminado";
         try {
-            categoriaService.delete(idCategoria);
+            categoriaService.delete(id);
 
         } catch (IllegalArgumentException e) {
             titulo = "error";

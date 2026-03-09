@@ -1,26 +1,36 @@
-/* ==========================
-PALETA ESCazú
-========================== */
+/*
+PALETA ESCAZU
+*/
 
 :root{
-    --escazu-morado:#431699;
+    --escazu-morado:#6B3FD1;
+    --escazu-morado-oscuro:#431699;
     --escazu-naranja:#f86828;
+    --escazu-naranja-oscuro: #d94e16;
     --escazu-turquesa:#1cb6b8;
-    --escazu-verde:#1eb760;
+    --escazu-verde:#168f48;
+    --escazu-verde-profundo:#0F6A35;
     --escazu-rosa:#ff0043;
     --escazu-verde-oscuro:#0f7e7f;
+    --escazu-verde-claro:#179798;
 }
 
-/* ==========================
-HEADER
-========================== */
+.bg-info{
+    background-color: var(--escazu-verde-oscuro)!important;
+    color: white;
+}
+
+.bg-warning{
+    background-color: var(--escazu-rosa) !important;
+    color: white;
+}
 
 .header{
-    background-color: var(--escazu-verde-oscuro);
+    background-color: var(--escazu-turquesa);
 }
 
 .navbar{
-    background-color: var(--escazu-verde-oscuro);
+    background-color: var(--escazu-turquesa);
 }
 
 .navbar-brand{
@@ -36,54 +46,49 @@ HEADER
     color: var(--escazu-morado) !important;
 }
 
-
-/* ==========================
-FOOTER
-========================== */
-
 footer{
     background-color: var(--escazu-morado);
 }
 
-/* ==========================
-BOTONES
-========================== */
-
 .btn-primary{
-    background-color: var(--escazu-turquesa);
+    background-color: var(--escazu-verde); 
     border:none;
 }
 
 .btn-primary:hover{
-    background-color: var(--escazu-verde-oscuro);
+    background-color: var(--escazu-verde-profundo);
 }
 
 .btn-success{
-    background-color: var(--escazu-verde);
+    background-color: var(--escazu-morado);
+    border:none;
+}
+
+.btn-success:hover{
+    background-color: var(--escazu-morado-oscuro);
+    border:none;
 }
 
 .btn-danger{
-    background-color: var(--escazu-verde-oscuro);
+    background-color: var(--escazu-naranja);
+    border:none;
 }
 
 .btn-danger:hover{
-    background-color: var(--escazu-verde);
+    background-color: var(--escazu-naranja-oscuro);
 }
 
 .btn-warning{
-    background-color: var(--escazu-morado);
+    background-color: var(--escazu-verde-claro);
+    border:none;
 }
 
 .btn-warning:hover{
     background-color: var(--escazu-verde-oscuro);
 }
 
-/* ==========================
-TOAST
-========================== */
-
 .toast-header.bg-success{
-    background-color: var(--escazu-verde) !important;
+    background-color: var(--escazu-morado) !important;
 }
 
 .toast-header.bg-danger{
