@@ -29,21 +29,14 @@ public class ProveedorController {
 
     @GetMapping("/listado")
     public String listado(Model model) {
-
         var proveedores = proveedorService.getProveedores();
         model.addAttribute("proveedores", proveedores);
         model.addAttribute("totalProveedores", proveedores.size());
         return "/proveedor/listado";
     }
 
-    @GetMapping("/nuevo")
-    public String nuevo(Proveedor proveedor) {
-        return "/proveedor/formulario";
-    }
-
     @PostMapping("/guardar")
     public String guardar(@Valid Proveedor proveedor, RedirectAttributes redirectAttributes) {
-
         proveedorService.save(proveedor);
         redirectAttributes.addFlashAttribute(
                 "todoOk",
@@ -53,13 +46,13 @@ public class ProveedorController {
     }
 
     @PostMapping("/eliminar")
-    public String eliminar(@RequestParam Integer idProveedor, RedirectAttributes redirectAttributes) {
+    public String eliminar(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
 
         String titulo = "todoOk";
         String detalle = "mensaje.eliminado";
 
         try {
-            proveedorService.delete(idProveedor);
+            proveedorService.delete(id);
         } catch (IllegalArgumentException e) {
             titulo = "error";
             detalle = "proveedor.error01";
@@ -77,10 +70,10 @@ public class ProveedorController {
         return "redirect:/proveedor/listado";
     }
 
-    @GetMapping("/modificar/{idProveedor}")
-    public String modificar(@PathVariable Integer idProveedor, Model model, RedirectAttributes redirectAttributes) {
+    @GetMapping("/modificar/{id}")
+    public String modificar(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
 
-        Optional<Proveedor> proveedorOpt = proveedorService.getProveedor(idProveedor);
+        Optional<Proveedor> proveedorOpt = proveedorService.getProveedor(id);
 
         if (proveedorOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute(
@@ -90,6 +83,6 @@ public class ProveedorController {
             return "redirect:/proveedor/listado";
         }
         model.addAttribute("proveedor", proveedorOpt.get());
-        return "/proveedor/formulario";
+        return "/proveedor/modificar";
     }
 }

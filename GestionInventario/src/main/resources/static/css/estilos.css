@@ -1,0 +1,92 @@
+/* ==========================
+PALETA ESCazú
+========================== */
+
+:root{
+    --escazu-morado:#431699;
+    --escazu-naranja:#f86828;
+    --escazu-turquesa:#1cb6b8;
+    --escazu-verde:#1eb760;
+    --escazu-rosa:#ff0043;
+    --escazu-verde-oscuro:#0f7e7f;
+}
+
+/* ==========================
+HEADER
+========================== */
+
+.header{
+    background-color: var(--escazu-verde-oscuro);
+}
+
+.navbar{
+    background-color: var(--escazu-verde-oscuro);
+}
+
+.navbar-brand{
+    color:white !important;
+    font-weight:600;
+}
+
+.nav-link{
+    color:white !important;
+}
+
+.nav-link:hover{
+    color: var(--escazu-morado) !important;
+}
+
+
+/* ==========================
+FOOTER
+========================== */
+
+footer{
+    background-color: var(--escazu-morado);
+}
+
+/* ==========================
+BOTONES
+========================== */
+
+.btn-primary{
+    background-color: var(--escazu-turquesa);
+    border:none;
+}
+
+.btn-primary:hover{
+    background-color: var(--escazu-verde-oscuro);
+}
+
+.btn-success{
+    background-color: var(--escazu-verde);
+}
+
+.btn-danger{
+    background-color: var(--escazu-verde-oscuro);
+}
+
+.btn-danger:hover{
+    background-color: var(--escazu-verde);
+}
+
+.btn-warning{
+    background-color: var(--escazu-morado);
+}
+
+.btn-warning:hover{
+    background-color: var(--escazu-verde-oscuro);
+}
+
+/* ==========================
+TOAST
+========================== */
+
+.toast-header.bg-success{
+    background-color: var(--escazu-verde) !important;
+}
+
+.toast-header.bg-danger{
+    background-color: var(--escazu-rosa) !important;
+}
+

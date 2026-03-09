@@ -29,34 +29,26 @@ public class CategoriaController {
 
     @GetMapping("/listado")
     public String listado(Model model) {
-
         var categorias = categoriaService.getCategorias();
-
         model.addAttribute("categorias", categorias);
         model.addAttribute("totalCategorias", categorias.size());
-
         return "/categoria/listado";
     }
 
     @PostMapping("/guardar")
     public String guardar(@Valid Categoria categoria, RedirectAttributes redirectAttributes) {
-
         categoriaService.save(categoria);
-
         redirectAttributes.addFlashAttribute(
                 "todoOk",
                 messageSource.getMessage("mensaje.actualizado", null, Locale.getDefault())
         );
-
         return "redirect:/categoria/listado";
     }
 
     @PostMapping("/eliminar")
     public String eliminar(@RequestParam Integer idCategoria, RedirectAttributes redirectAttributes) {
-
         String titulo = "todoOk";
         String detalle = "mensaje.eliminado";
-
         try {
             categoriaService.delete(idCategoria);
 
@@ -72,22 +64,17 @@ public class CategoriaController {
             titulo = "error";
             detalle = "categoria.error03";
         }
-
         redirectAttributes.addFlashAttribute(
                 titulo,
                 messageSource.getMessage(detalle, null, Locale.getDefault())
         );
-
         return "redirect:/categoria/listado";
     }
 
     @GetMapping("/modificar/{id}")
     public String modificar(@PathVariable Integer id, Model model, RedirectAttributes redirectAttributes) {
-
         Optional<Categoria> categoriaOpt = categoriaService.getCategoria(id);
-
         if (categoriaOpt.isEmpty()) {
-
             redirectAttributes.addFlashAttribute(
                     "error",
                     messageSource.getMessage("categoria.error01", null, Locale.getDefault())
@@ -95,10 +82,9 @@ public class CategoriaController {
 
             return "redirect:/categoria/listado";
         }
-
         model.addAttribute("categoria", categoriaOpt.get());
 
-        return "/categoria/formulario";
+        return "/categoria/modificar";
     }
 
 }
