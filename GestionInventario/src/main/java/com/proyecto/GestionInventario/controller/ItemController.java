@@ -56,15 +56,9 @@ public class ItemController {
         model.addAttribute("idProveedorSeleccionado", provId);
         model.addAttribute("activoSeleccionado", activoBool);
 
+        model.addAttribute("itemNuevo", new Item());
         cargarListas(model);
         return "/item/listado";
-    }
-
-    @GetMapping("/nuevo")
-    public String nuevo(Model model) {
-        model.addAttribute("item", new Item());
-        cargarListas(model);
-        return "/item/formulario";
     }
 
     @PostMapping("/guardar")
@@ -77,8 +71,13 @@ public class ItemController {
         }
 
         if (result.hasErrors()) {
+            if (item.getId() != null) {
+                cargarListas(model);
+                return "/item/modificar";
+            }
             cargarListas(model);
-            return "/item/formulario";
+            model.addAttribute("itemNuevo", item);
+            return "/item/listado";
         }
 
         itemService.save(item);
@@ -102,10 +101,9 @@ public class ItemController {
 
         model.addAttribute("item", itemOpt.get());
         cargarListas(model);
-        return "/item/formulario";
+        return "/item/modificar";
     }
 
-    
     @PostMapping("/eliminar")
     public String eliminar(@RequestParam Long idItem, RedirectAttributes redirectAttributes) {
 

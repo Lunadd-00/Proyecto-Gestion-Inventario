@@ -1,0 +1,441 @@
+<section th:fragment="agregarItem">
+    <div class='row py-4 mb-2 bg-light'>
+        <div class='col-md-1'></div>
+        <div class='col-md-3'>
+            <button type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#agregarItemModal">
+                <i class="fa-solid fa-plus"></i>
+                Nuevo Ítem
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade"
+         id="agregarItemModal"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fa-solid fa-box"></i>
+                        Agregar Ítem
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/item/guardar}"
+                      th:object="${itemNuevo}"
+                      method="post"
+                      class="was-validated">
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label>Nombre *</label>
+                            <input type="text" class="form-control" name="nombre" required/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Descripción</label>
+                            <textarea class="form-control" name="descripcion" rows="2"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Categoría *</label>
+                                <select class="form-select" name="categoria.id" required>
+                                    <option value="">-- Seleccione --</option>
+                                    <option th:each="cat : ${categorias}"
+                                            th:value="${cat.id}"
+                                            th:text="${cat.nombre}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Proveedor *</label>
+                                <select class="form-select" name="proveedor.id" required>
+                                    <option value="">-- Seleccione --</option>
+                                    <option th:each="prov : ${proveedores}"
+                                            th:value="${prov.id}"
+                                            th:text="${prov.nombre}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label>Stock *</label>
+                                <input type="number" class="form-control" name="stock" min="0" required/>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Stock Mínimo *</label>
+                                <input type="number" class="form-control" name="stockMinimo" min="0" required/>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Unidad de Medida *</label>
+                                <select class="form-select" name="unidadMedida" required>
+                                    <option value="">-- Seleccione --</option>
+                                    <option value="Unidad">Unidad</option>
+                                    <option value="Kit">Kit</option>
+                                    <option value="Caja">Caja</option>
+                                    <option value="Par">Par</option>
+                                    <option value="Rollo">Rollo</option>
+                                    <option value="Litro">Litro</option>
+                                    <option value="Kilogramo">Kilogramo</option>
+                                    <option value="Metro">Metro</option>
+                                    <option value="Galón">Galón</option>
+                                    <option value="Paquete">Paquete</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       id="tieneCaducidadNuevo" name="tieneCaducidad"
+                                       onchange="toggleFecha('tieneCaducidadNuevo', 'divFechaNuevo')"/>
+                                <label class="form-check-label" for="tieneCaducidadNuevo">
+                                    Posee fecha de caducidad
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="divFechaNuevo" style="display:none">
+                            <label>Fecha de Caducidad *</label>
+                            <input type="date" class="form-control" name="fechaCaducidad"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       id="activoNuevo" name="activo" checked/>
+                                <label class="form-check-label" for="activoNuevo">Activo</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i>
+                            Cerrar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section th:fragment="listadoItem" class="p-3">
+
+    <div class="row px-3 mb-2">
+        <div class="col-md-9">
+            <form th:action="@{/item/listado}" method="get" class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label>Categoría</label>
+                    <select name="idCategoria" class="form-select">
+                        <option value="">Todas</option>
+                        <option th:each="cat : ${categorias}"
+                                th:value="${cat.id}"
+                                th:text="${cat.nombre}"
+                                th:selected="${cat.id != null and cat.id.equals(idCategoriaSeleccionada)}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label>Proveedor</label>
+                    <select name="idProveedor" class="form-select">
+                        <option value="">Todos</option>
+                        <option th:each="prov : ${proveedores}"
+                                th:value="${prov.id}"
+                                th:text="${prov.nombre}"
+                                th:selected="${prov.id != null and prov.id.equals(idProveedorSeleccionado)}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Estado</label>
+                    <select name="activo" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="true"  th:selected="${activoSeleccionado != null and activoSeleccionado == true}">Activo</option>
+                        <option value="false" th:selected="${activoSeleccionado != null and activoSeleccionado == false}">Inactivo</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <a th:href="@{/item/listado}" class="btn btn-secondary">Limpiar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row p-3 justify-content-center">
+        <div class="col-md-11">
+            <div class="card p-2">
+                <div class="card-header">
+                    <h4>Lista de Ítems
+                        <span class="fs-6 fw-normal text-muted">
+                            (Total: <span th:text="${totalItems}"></span>)
+                        </span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div th:if="${items != null and !items.empty}">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nombre</th>
+                                    <th>Categoría</th>
+                                    <th>Proveedor</th>
+                                    <th>Stock</th>
+                                    <th>Stock Mín.</th>
+                                    <th>Unidad</th>
+                                    <th>Caducidad</th>
+                                    <th>Activo</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${items}">
+                                    <td>[[${item.id}]]</td>
+                                    <td>[[${item.nombre}]]</td>
+                                    <td>[[${item.categoria.nombre}]]</td>
+                                    <td>[[${item.proveedor.nombre}]]</td>
+                                    <td>[[${item.stock}]]</td>
+                                    <td>[[${item.stockMinimo}]]</td>
+                                    <td>[[${item.unidadMedida}]]</td>
+                                    <td>
+                                        <span th:if="${item.tieneCaducidad}" th:text="${#temporals.format(item.fechaCaducidad, 'dd/MM/yyyy')}"></span>
+                                        <span th:unless="${item.tieneCaducidad}">N/A</span>
+                                    </td>
+                                    <td th:text="${item.activo} ? 'Sí' : 'No'"></td>
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#confirmModalItem"
+                                                th:data-bs-id="${item.id}"
+                                                th:data-bs-nombre="${item.nombre}">
+                                            [[#{accion.eliminar}]]
+                                        </button>
+                                        <a th:href="@{/item/modificar/}+${item.id}" class="btn btn-warning">
+                                            [[#{accion.actualizar}]]
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center p-2"
+                         th:if="${items == null or items.empty}">
+                        <span>[[#{lista.vacia}]]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section th:fragment="editarItem">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <form method="POST"
+                  th:action="@{/item/guardar}"
+                  th:object="${item}"
+                  class="was-validated">
+                <input type="hidden" th:field="*{id}"/>
+
+                <div class="row py-4 mb-4 bg-light">
+                    <div class="col-md-4 d-grid">
+                        <a th:href="@{/item/listado}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i>
+                            [[#{accion.regresar}]]
+                        </a>
+                    </div>
+                    <div class="col-md-4 d-grid">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i>
+                            [[#{accion.guardar}]]
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h4>[[#{accion.actualizar}]]</h4>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="mb-3">
+                            <label>Nombre *</label>
+                            <input type="text" class="form-control" th:field="*{nombre}" required/>
+                            <small class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Descripción</label>
+                            <textarea class="form-control" th:field="*{descripcion}" rows="2"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Categoría *</label>
+                                <select th:field="*{categoria.id}" class="form-select" required>
+                                    <option value="">-- Seleccione --</option>
+                                    <option th:each="cat : ${categorias}"
+                                            th:value="${cat.id}"
+                                            th:text="${cat.nombre}">
+                                    </option>
+                                </select>
+                                <small class="text-danger" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Proveedor *</label>
+                                <select th:field="*{proveedor.id}" class="form-select" required>
+                                    <option value="">-- Seleccione --</option>
+                                    <option th:each="prov : ${proveedores}"
+                                            th:value="${prov.id}"
+                                            th:text="${prov.nombre}">
+                                    </option>
+                                </select>
+                                <small class="text-danger" th:if="${#fields.hasErrors('proveedor')}" th:errors="*{proveedor}"></small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label>Stock *</label>
+                                <input type="number" class="form-control" th:field="*{stock}" min="0" required/>
+                                <small class="text-danger" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></small>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Stock Mínimo *</label>
+                                <input type="number" class="form-control" th:field="*{stockMinimo}" min="0" required/>
+                                <small class="text-danger" th:if="${#fields.hasErrors('stockMinimo')}" th:errors="*{stockMinimo}"></small>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label>Unidad de Medida *</label>
+                                <select th:field="*{unidadMedida}" class="form-select" required>
+                                    <option value="">-- Seleccione --</option>
+                                    <option value="Unidad">Unidad</option>
+                                    <option value="Kit">Kit</option>
+                                    <option value="Caja">Caja</option>
+                                    <option value="Par">Par</option>
+                                    <option value="Rollo">Rollo</option>
+                                    <option value="Litro">Litro</option>
+                                    <option value="Kilogramo">Kilogramo</option>
+                                    <option value="Metro">Metro</option>
+                                    <option value="Galón">Galón</option>
+                                    <option value="Paquete">Paquete</option>
+                                </select>
+                                <small class="text-danger" th:if="${#fields.hasErrors('unidadMedida')}" th:errors="*{unidadMedida}"></small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       id="tieneCaducidadEdit" th:field="*{tieneCaducidad}"
+                                       onchange="toggleFecha('tieneCaducidadEdit', 'divFechaEdit')"/>
+                                <label class="form-check-label" for="tieneCaducidadEdit">
+                                    Posee fecha de caducidad
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="divFechaEdit"
+                             th:style="${item.tieneCaducidad} ? 'display:block' : 'display:none'">
+                            <label>Fecha de Caducidad *</label>
+                            <input type="date" class="form-control" th:field="*{fechaCaducidad}"/>
+                            <small class="text-danger" th:if="${#fields.hasErrors('fechaCaducidad')}" th:errors="*{fechaCaducidad}"></small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       id="activoEdit" th:field="*{activo}"/>
+                                <label class="form-check-label" for="activoEdit">Activo</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+<section th:fragment="confirmarEliminarItem">
+    <div class="modal fade"
+         id="confirmModalItem"
+         tabindex="-1"
+         aria-labelledby="modalLabelItem"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form th:action="@{/item/eliminar}" method="post">
+                    <input type="hidden" name="idItem" id="modalItemId"/>
+                    <div class="modal-header bg-warning text-white">
+                        <h5 class="modal-title" id="modalLabelItem">
+                            <i class="fa-solid fa-circle-radiation"></i> [[#{accion.confirmar}]]
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>[[#{accion.confirmar.texto1}]] <strong id="modalItemNombre"></strong>?</p>
+                        <h6>[[#{accion.confirmar.texto2}]]</h6>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<th:block th:fragment="scriptItem">
+    <script>
+        function toggleFecha(checkId, divId) {
+            var checkbox = document.getElementById(checkId);
+            var div = document.getElementById(divId);
+            var input = div.querySelector('input[type="date"]');
+            if (checkbox.checked) {
+                div.style.display = 'block';
+            } else {
+                div.style.display = 'none';
+                if (input) input.value = '';
+            }
+        }
+
+        var confirmModalItem = document.getElementById('confirmModalItem');
+        if (confirmModalItem) {
+            confirmModalItem.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                document.getElementById('modalItemId').value = button.getAttribute('data-bs-id');
+                document.getElementById('modalItemNombre').textContent = button.getAttribute('data-bs-nombre');
+            });
+        }
+    </script>
+</th:block>

@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+      xmlns:th="http://www.thymeleaf.org">
     <head th:replace="~{general/fragmentos :: head}"/>
     <body>
         <header th:replace="~{general/fragmentos :: header}"/>
 
-        <section th:replace="~{item/fragmentos :: agregarItem}"/>
-        <section th:replace="~{item/fragmentos :: listadoItem}"/>
-        <section th:replace="~{item/fragmentos :: confirmarEliminarItem}"/>
+        <section th:replace="~{item/fragmentos :: editarItem}"/>
         <section th:replace="~{general/fragmentos :: mostrarToast}"/>
         <th:block th:replace="~{item/fragmentos :: scriptItem}"/>
 
