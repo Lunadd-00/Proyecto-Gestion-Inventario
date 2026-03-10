@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.proyecto.GestionInventario.controller;
+
 import com.proyecto.GestionInventario.domain.Usuario;
 import com.proyecto.GestionInventario.service.UsuarioService;
 import java.util.Locale;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
 /**
  *
  * @author abbyc
@@ -26,12 +28,17 @@ public class LoginController {
         this.messageSource = messageSource;
     }
 
+//    @GetMapping("/")
+//    public String home() {
+//        return "login";
+//    }
+
     @GetMapping("/login")
     public String login() {
         return "login";
     }
 
-    @PostMapping("/login")
+    @PostMapping("/procesar-login")
     public String iniciarSesion(String correo, String password, Model model) {
 
         Usuario usuario = usuarioService.login(correo, password);

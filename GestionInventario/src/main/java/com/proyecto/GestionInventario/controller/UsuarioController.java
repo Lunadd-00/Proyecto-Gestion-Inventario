@@ -53,12 +53,12 @@ public class UsuarioController {
     }
 
     @PostMapping("/eliminar")
-    public String eliminar(@RequestParam Integer idUsuario, RedirectAttributes redirectAttributes) {
+    public String eliminar(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         String titulo = "todoOk";
         String detalle = "mensaje.eliminado";
 
         try {
-            usuarioService.delete(idUsuario);
+            usuarioService.delete(id);
         } catch (IllegalArgumentException e) {
             titulo = "error";
             detalle = "usuario.error01";
@@ -75,9 +75,9 @@ public class UsuarioController {
         return "redirect:/usuario/listado";
     }
 
-    @GetMapping("/modificar/{idUsuario}")
-    public String modificar(@PathVariable("idUsuario") Integer idUsuario, Model model, RedirectAttributes redirectAttributes) {
-        Optional<Usuario> usuarioOpt = usuarioService.getUsuario(idUsuario);
+    @GetMapping("/modificar/{id}")
+    public String modificar(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<Usuario> usuarioOpt = usuarioService.getUsuario(id);
 
         if (usuarioOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error",
@@ -86,6 +86,6 @@ public class UsuarioController {
         }
 
         model.addAttribute("usuario", usuarioOpt.get());
-        return "/usuario/modifica";
+        return "/usuario/modificar";
     }
 }
