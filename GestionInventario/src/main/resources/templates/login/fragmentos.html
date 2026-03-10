@@ -1,59 +1,41 @@
 <section th:fragment="loginSection">
-
     <div class="container">
-
         <div class="row justify-content-center mt-5">
-
             <div class="col-md-4">
-
                 <div class="card shadow">
-
                     <div class="card-header text-center">
                         <h4>Iniciar Sesión</h4>
                     </div>
-
                     <div class="card-body">
-
                         <div th:if="${error}" class="alert alert-danger">
                             <span th:text="${error}"></span>
                         </div>
-
                         <form th:action="@{/procesar-login}" method="post">
-
                             <div class="mb-3">
-                                <label class="form-label">Correo</label>
+                                <label class="form-label">[[#{login.correo}]]</label>
                                 <input type="email"
                                        name="correo"
                                        class="form-control"
                                        placeholder="Ingrese su correo"
                                        required>
                             </div>
-
                             <div class="mb-3">
-                                <label class="form-label">Contraseña</label>
+                                <label class="form-label">[[#{login.contraseña}]]</label>
                                 <input type="password"
                                        name="password"
                                        class="form-control"
                                        placeholder="Ingrese su contraseña"
                                        required>
                             </div>
-
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary">
-                                    Iniciar sesión
+                                    [[#{login.iniciarsesion}]]
                                 </button>
                             </div>
-
                         </form>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </section>

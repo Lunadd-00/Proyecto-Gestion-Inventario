@@ -28,7 +28,6 @@
                             class="btn-close"
                             data-bs-dismiss="modal"></button>
                 </div>
-                <!-- Se cambia la acción a /usuario/guardar y el objeto a usuarioNuevo -->
                 <form th:action="@{/usuario/guardar}"
                       th:object="${usuarioNuevo}"
                       method="post"
@@ -61,9 +60,13 @@
 
                         <div class="mb-3">
                             <div class="form-check">
+                                <input type="hidden" name="activo" value="false"/>
                                 <input class="form-check-input" type="checkbox"
-                                       id="activoNuevo" name="activo" checked/>
-                                <label class="form-check-label" for="activoNuevo">[[#{usuario.activo}]]</label>
+                                       id="activoNuevo" name="activo" value="true" checked/>
+                                <label class="form-check-label" for="activoNuevo">
+                                    [[#{usuario.activo}]]
+                                </label>
+
                             </div>
                         </div>
 
@@ -142,17 +145,21 @@
                                     </td>
                                     <td th:text="${usuario.activo} ? 'Sí' : 'No'"></td>
                                     <td>
-                                        <!-- Botón para Desactivar/Activar (Modal) -->
                                         <button type="button"
-                                                class="btn btn-danger"
+                                                class="btn"
+                                                th:classappend="${usuario.activo} ? 'btn-danger' : 'btn-success'"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#confirmModalUsuario"
                                                 th:data-bs-id="${usuario.id}"
                                                 th:data-bs-nombre="${usuario.nombre}"
                                                 th:data-bs-activo="${usuario.activo}">
-                                            [[#{usuario.desactivar}]]
+                                            <span th:if="${usuario.activo}">
+                                                <i class="fa-solid fa-user-xmark"></i> Desactivar
+                                            </span>
+                                            <span th:unless="${usuario.activo}">
+                                                <i class="fa-solid fa-user-check"></i>Activar
+                                            </span>
                                         </button>
-                                        <!-- Botón para Editar -->
                                         <a th:href="@{/usuario/modificar/}+${usuario.id}" class="btn btn-warning">
                                             [[#{accion.actualizar}]]
                                         </a>
@@ -176,7 +183,6 @@
     <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-8">
-            <!-- Se cambia la acción a /usuario/guardar -->
             <form method="POST"
                   th:action="@{/usuario/guardar}"
                   th:object="${usuario}"
@@ -246,7 +252,8 @@
         </div>
     </div>
 </section>
-<!-- Fragmento 4: Confirmar Desactivación -->
+
+<!-- Fragmento 4: Confirmar Desactivación/Acticación -->
 <section th:fragment="confirmarDesactivarUsuario">
     <div class="modal fade" 
          id="confirmModalUsuario" 
@@ -255,18 +262,22 @@
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered custom-modal-animation">
             <div class="modal-content animate-slide-up">
-                <!-- Se asume que el controlador maneja la lógica de toggle o desactivación -->
                 <form th:action="@{/usuario/desactivar}" th:object="${usuario}" method="post">
                     <input type="hidden" name="id" id="modalId"/>
                     <div class="modal-header bg-warning text-white">
                         <h5 class="modal-title" id="modalLabel">
-                            <i class="fa-solid fa-user-xmark"></i> [[#{usuario.confirmarDesactivar}]]
+                            <i id="modalIcon" class="fa-solid fa-user-xmark"></i>
+                            <span id="modalTitulo">[[#{usuario.confirmarDesactivar}]]</span>
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
                     <div class="modal-body">
-                        <p>[[#{usuario.confirmar.texto1}]] <span id="modalnombre"></span>?</p>
-                        <h6>[[#{usuario.confirmar.texto2}]]</h6>
+                        <p id="modalTexto1">
+                            [[#{usuario.confirmar.texto1}]] <span id="modalnombre"></span>?
+                        </p>
+                        <h6 id="modalTexto2">
+                            [[#{usuario.confirmar.texto2}]]
+                        </h6>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-danger">

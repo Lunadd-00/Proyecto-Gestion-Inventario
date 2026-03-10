@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.proyecto.GestionInventario.controller;
 
 import com.proyecto.GestionInventario.domain.Usuario;
@@ -36,10 +32,11 @@ public class UsuarioController {
     }
 
     @GetMapping("/listado")
-    public String listado(Model model) {
-        var usuarios = usuarioService.getUsuarios(false);
+    public String listado(@RequestParam(required = false) Boolean activo, Model model) {
+        var usuarios = usuarioService.getUsuarios(activo);
         model.addAttribute("usuarios", usuarios);
         model.addAttribute("totalUsuarios", usuarios.size());
+        model.addAttribute("activoSeleccionado", activo);
         return "/usuario/listado";
     }
 
@@ -52,26 +49,11 @@ public class UsuarioController {
         return "redirect:/usuario/listado";
     }
 
-    @PostMapping("/eliminar")
-    public String eliminar(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
-        String titulo = "todoOk";
-        String detalle = "mensaje.eliminado";
-
-        try {
-            usuarioService.delete(id);
-        } catch (IllegalArgumentException e) {
-            titulo = "error";
-            detalle = "usuario.error01";
-        } catch (IllegalStateException e) {
-            titulo = "error";
-            detalle = "usuario.error02";
-        } catch (Exception e) {
-            titulo = "error";
-            detalle = "usuario.error03";
-        }
-
-        redirectAttributes.addFlashAttribute(titulo,
-                messageSource.getMessage(detalle, null, Locale.getDefault()));
+    @PostMapping("/desactivar")
+    public String desactivar(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        usuarioService.toggleActivo(id);
+        redirectAttributes.addFlashAttribute("todoOk",
+                messageSource.getMessage("usuario.estado.cambiado", null, Locale.getDefault()));
         return "redirect:/usuario/listado";
     }
 

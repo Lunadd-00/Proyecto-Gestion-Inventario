@@ -81,6 +81,7 @@ footer{
 .btn-warning{
     background-color: var(--escazu-verde-claro);
     border:none;
+    color: white;
 }
 
 .btn-warning:hover{
@@ -94,4 +95,3 @@ footer{
 .toast-header.bg-danger{
     background-color: var(--escazu-rosa) !important;
 }
-

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.proyecto.GestionInventario.controller;
 
 import com.proyecto.GestionInventario.domain.Usuario;
@@ -12,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -28,37 +25,28 @@ public class LoginController {
         this.messageSource = messageSource;
     }
 
-//    @GetMapping("/")
-//    public String home() {
-//        return "login";
-//    }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";
+    @GetMapping({"/", "/login"})
+    public String loginPage() {
+        return "login"; 
     }
 
     @PostMapping("/procesar-login")
-    public String iniciarSesion(String correo, String password, Model model) {
+    public String procesarLogin(@RequestParam String correo,
+            @RequestParam String password,
+            Model model) {
 
         Usuario usuario = usuarioService.login(correo, password);
 
-        if (usuario == null) {
-
-            String mensajeError = messageSource.getMessage(
-                    "login.error",
-                    null,
-                    Locale.getDefault()
-            );
-
-            model.addAttribute("error", mensajeError);
+        if (usuario != null) {
+            return "redirect:/index";
+        } else {
+            model.addAttribute("error", "Credenciales incorrectas o usuario inactivo");
             return "login";
         }
+    }
 
-        if (usuario.getRol().name().equals("ADMIN")) {
-            return "redirect:/admin/dashboard";
-        }
-
-        return "redirect:/inventario";
+    @GetMapping("/index")
+    public String homePage() {
+        return "index"; 
     }
 }

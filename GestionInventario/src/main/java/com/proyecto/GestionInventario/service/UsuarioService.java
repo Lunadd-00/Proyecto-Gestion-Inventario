@@ -22,11 +22,11 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public List<Usuario> getUsuarios(boolean activo) {
-        if (activo) {
-            return usuarioRepository.findByActivoTrue();
+    public List<Usuario> getUsuarios(Boolean activo) {
+        if (activo == null) {
+            return usuarioRepository.findAll();
         }
-        return usuarioRepository.findAll();
+        return usuarioRepository.findByActivo(activo);
     }
 
     @Transactional(readOnly = true)
@@ -40,16 +40,11 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void delete(Integer idUsuario) {
-        if (!usuarioRepository.existsById(idUsuario)) {
-            throw new IllegalArgumentException("El usuario con ID " + idUsuario + " no existe.");
-        }
-        try {
-            usuarioRepository.deleteById(idUsuario);
-        } catch (DataIntegrityViolationException e) {
-            throw new IllegalStateException("No se puede eliminar el usuario. Tiene datos asociados.", e);
-        }
-
+    public void toggleActivo(Integer idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        usuario.setActivo(Boolean.FALSE.equals(usuario.getActivo()));
+        usuarioRepository.save(usuario);
     }
 
     @Transactional(readOnly = true)
