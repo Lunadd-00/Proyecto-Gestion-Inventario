@@ -6,11 +6,13 @@
     <body>
         <header th:replace="~{general/fragmentos :: header}"/>
 
-        <section th:replace="~{item/fragmentos :: agregarItem}"/>
-        <section th:replace="~{item/fragmentos :: listadoItem}"/>
-        <section th:replace="~{item/fragmentos :: confirmarEliminarItem}"/>
-        <section th:replace="~{general/fragmentos :: mostrarToast}"/>
-        <th:block th:replace="~{item/fragmentos :: scriptItem}"/>
+        <div class="contenido-principal">
+            <section th:replace="~{item/fragmentos :: agregarItem}"/>
+            <section th:replace="~{item/fragmentos :: listadoItem}"/>
+            <section th:replace="~{item/fragmentos :: confirmarEliminarItem}"/>
+            <section th:replace="~{general/fragmentos :: mostrarToast}"/>
+            <th:block th:replace="~{item/fragmentos :: scriptItem}"/>
+        </div>
 
         <footer th:replace="~{general/fragmentos :: footer}"/>
     </body>

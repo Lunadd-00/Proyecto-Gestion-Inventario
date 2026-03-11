@@ -15,6 +15,27 @@ PALETA ESCAZU
     --escazu-verde-claro:#179798;
 }
 
+
+html{
+    height: 100%;
+}
+
+body{
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.contenido-principal{
+    flex: 1;
+}
+
+footer{
+    background-color: var(--escazu-morado);
+    margin-top: auto;
+}
+
+
 .bg-info{
     background-color: var(--escazu-verde-oscuro)!important;
     color: white;
@@ -31,6 +52,7 @@ PALETA ESCAZU
 
 .navbar{
     background-color: var(--escazu-turquesa);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
 .navbar-brand{
@@ -38,17 +60,22 @@ PALETA ESCAZU
     font-weight:600;
 }
 
+.navbar-brand img{
+    height: 40px;
+    margin-right: 8px;
+}
+
 .nav-link{
     color:white !important;
+    transition: color 0.2s ease;
+    border-radius: 4px;
 }
 
 .nav-link:hover{
     color: var(--escazu-morado) !important;
+    background-color: rgba(255,255,255,0.15);
 }
 
-footer{
-    background-color: var(--escazu-morado);
-}
 
 .btn-primary{
     background-color: var(--escazu-verde); 
@@ -88,10 +115,84 @@ footer{
     background-color: var(--escazu-verde-oscuro);
 }
 
+.card{
+    border: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    border-radius: 8px;
+}
+
+.card-header{
+    background-color: #f8f9fa;
+    border-bottom: 2px solid var(--escazu-turquesa);
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.table thead th{
+    background-color: var(--escazu-turquesa);
+    color: white;
+    border: none;
+    font-weight: 500;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd){
+    background-color: rgba(28, 182, 184, 0.05);
+}
+
+.table-hover > tbody > tr:hover{
+    background-color: rgba(28, 182, 184, 0.1);
+}
+
+
+.modal-content{
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+
 .toast-header.bg-success{
     background-color: var(--escazu-morado) !important;
 }
 
 .toast-header.bg-danger{
     background-color: var(--escazu-rosa) !important;
+}
+
+
+.login-container{
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--escazu-turquesa) 0%, var(--escazu-verde-oscuro) 100%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card{
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.login-card .card-header{
+    background-color: white;
+    border-bottom: 3px solid var(--escazu-turquesa);
+    border-radius: 10px 10px 0 0 !important;
+}
+
+
+.bg-light{
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #e9ecef;
+}
+
+
+.form-control:focus{
+    border-color: var(--escazu-turquesa);
+    box-shadow: 0 0 0 0.2rem rgba(28, 182, 184, 0.25);
+}
+
+.form-select:focus{
+    border-color: var(--escazu-turquesa);
+    box-shadow: 0 0 0 0.2rem rgba(28, 182, 184, 0.25);
 }

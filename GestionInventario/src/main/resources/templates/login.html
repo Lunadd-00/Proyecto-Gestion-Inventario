@@ -4,17 +4,19 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     <head th:replace="~{general/fragmentos :: head}">
     </head>
-    <body>
+    <body class="login-container">
 
-        <div class="container mt-5">
+        <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-6 text-center">
-                    <h2>Bienvenido al sistema de gestión de inventario</h2>
-                    <p>Por favor, ingrese sus credenciales para continuar</p>
+                <div class="col-md-4">
+                    <div class="text-center mb-4">
+                        <img th:src="@{/img/Logo-Municipalidad-Escazu.png}" alt="Logo" style="height: 60px;">
+                            <h4 class="text-white mt-2">Sistema de Gestion de Inventario</h4>
+                            <p class="text-white-50">Ingrese sus credenciales para continuar</p>
+                    </div>
+                    <section th:replace="~{login/fragmentos :: loginSection}"/>
                 </div>
             </div>
         </div>
-
-        <section th:replace="~{login/fragmentos :: loginSection}"/>
     </body>
 </html>

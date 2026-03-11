@@ -5,8 +5,10 @@
     <body>
         <header th:replace="~{general/fragmentos :: header}"/>
 
-        <section th:replace="~{categoria/fragmentos :: editarCategoria}"/>
-        <section th:replace="~{general/fragmentos :: mostrarToast}"/>
+        <div class="contenido-principal">
+            <section th:replace="~{categoria/fragmentos :: editarCategoria}"/>
+            <section th:replace="~{general/fragmentos :: mostrarToast}"/>
+        </div>
 
         <footer th:replace="~{general/fragmentos :: footer}"/>
     </body>

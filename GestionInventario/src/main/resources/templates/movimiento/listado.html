@@ -6,12 +6,14 @@
     <body>
         <header th:replace="~{general/fragmentos :: header}"/>
 
-        <section th:replace="~{movimiento/fragmentos :: botonesMovimiento}"/>
-        <section th:replace="~{movimiento/fragmentos :: listadoMovimiento}"/>
-        <section th:replace="~{movimiento/fragmentos :: modalEntrada}"/>
-        <section th:replace="~{movimiento/fragmentos :: modalSalida}"/>
-        <section th:replace="~{general/fragmentos :: mostrarToast}"/>
-        <th:block th:replace="~{movimiento/fragmentos :: scriptMovimiento}"/>
+        <div class="contenido-principal">
+            <section th:replace="~{movimiento/fragmentos :: botonesMovimiento}"/>
+            <section th:replace="~{movimiento/fragmentos :: listadoMovimiento}"/>
+            <section th:replace="~{movimiento/fragmentos :: modalEntrada}"/>
+            <section th:replace="~{movimiento/fragmentos :: modalSalida}"/>
+            <section th:replace="~{general/fragmentos :: mostrarToast}"/>
+            <th:block th:replace="~{movimiento/fragmentos :: scriptMovimiento}"/>
+        </div>
 
         <footer th:replace="~{general/fragmentos :: footer}"/>
     </body>

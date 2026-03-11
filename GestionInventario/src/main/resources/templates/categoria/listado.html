@@ -7,10 +7,12 @@
     <body>
         <header th:replace="~{general/fragmentos :: header}"/>
 
-        <section th:replace="~{categoria/fragmentos :: agregarCategoria}"/>
-        <section th:replace="~{categoria/fragmentos :: listadoCategoria}"/>
-        <section th:replace="~{categoria/fragmentos :: confirmarEliminarCategoria}"/>
-        <section th:replace="~{general/fragmentos :: mostrarToast}"/>
+        <div class="contenido-principal">
+            <section th:replace="~{categoria/fragmentos :: agregarCategoria}"/>
+            <section th:replace="~{categoria/fragmentos :: listadoCategoria}"/>
+            <section th:replace="~{categoria/fragmentos :: confirmarEliminarCategoria}"/>
+            <section th:replace="~{general/fragmentos :: mostrarToast}"/>
+        </div>
 
         <footer th:replace="~{general/fragmentos :: footer}"/>
 
