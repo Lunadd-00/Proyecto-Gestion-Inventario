@@ -21,8 +21,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (modalNombre)
                     modalNombre.textContent = button.getAttribute('data-bs-nombre');
 
-                const activo = button.dataset.bsActivo === 'true';
-                if (activo !== null) {
+                const activoAttr = button.dataset.bsActivo;
+                if (activoAttr !== undefined) {
+                    const activo = activoAttr === 'true';
                     const btnSubmit = confirmModal.querySelector('button[type="submit"]');
 
                     if (activo) {
