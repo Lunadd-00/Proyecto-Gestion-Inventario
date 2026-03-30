@@ -78,9 +78,12 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span th:if="${mov.bodegaDestino != null}" th:text="${mov.bodegaDestino.nombre}"></span>
-                                                    <span th:if="${mov.bodegaOrigen != null and mov.bodegaDestino == null}" th:text="${mov.bodegaOrigen.nombre}"></span>
-                                                    <span th:if="${mov.bodegaDestino == null and mov.bodegaOrigen == null}" class="text-muted">—</span>
+                                                    <span th:if="${mov.tipo.name() == 'TRANSFERENCIA' and mov.bodegaOrigen != null and mov.bodegaDestino != null}">
+                                                        [[${mov.bodegaOrigen.nombre}]] <i class="fa-solid fa-arrow-right"></i> [[${mov.bodegaDestino.nombre}]]
+                                                    </span>
+                                                    <span th:if="${mov.tipo.name() != 'TRANSFERENCIA' and mov.bodegaDestino != null}" th:text="${mov.bodegaDestino.nombre}"></span>
+                                                    <span th:if="${mov.tipo.name() != 'TRANSFERENCIA' and mov.bodegaOrigen != null and mov.bodegaDestino == null}" th:text="${mov.bodegaOrigen.nombre}"></span>
+                                                    <span th:if="${mov.tipo.name() != 'TRANSFERENCIA' and mov.bodegaDestino == null and mov.bodegaOrigen == null}" class="text-muted">—</span>
                                                 </td>
                                                 <td>[[${mov.motivo}]]</td>
                                                 <td>[[${mov.usuario.nombre}]]</td>
