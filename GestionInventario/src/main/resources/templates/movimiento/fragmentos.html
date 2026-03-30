@@ -69,12 +69,12 @@
                                 <small class="text-muted">[[#{movimiento.cantidadEntradaAyuda}]]</small>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>[[#{movimiento.usuario}]] *</label>
-                                <select class="form-select" name="usuario.id" required>
-                                    <option value="">-- [[#{movimiento.seleccioneUsuario}]] --</option>
-                                    <option th:each="usuario : ${usuarios}"
-                                            th:value="${usuario.id}"
-                                            th:text="${usuario.nombre}">
+                                <label>[[#{movimiento.bodega}]] *</label>
+                                <select class="form-select" name="bodegaDestino.id" required>
+                                    <option value="">-- [[#{movimiento.seleccioneBodega}]] --</option>
+                                    <option th:each="bodega : ${bodegas}"
+                                            th:value="${bodega.id}"
+                                            th:text="${bodega.nombre}">
                                     </option>
                                 </select>
                             </div>
@@ -169,12 +169,12 @@
                                 </small>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>[[#{movimiento.usuario}]] *</label>
-                                <select class="form-select" name="usuario.id" required>
-                                    <option value="">-- [[#{movimiento.seleccioneUsuario}]] --</option>
-                                    <option th:each="usuario : ${usuarios}"
-                                            th:value="${usuario.id}"
-                                            th:text="${usuario.nombre}">
+                                <label>[[#{movimiento.bodega}]]</label>
+                                <select class="form-select" name="bodegaOrigen.id">
+                                    <option value="">-- [[#{movimiento.seleccioneBodega}]] --</option>
+                                    <option th:each="bodega : ${bodegas}"
+                                            th:value="${bodega.id}"
+                                            th:text="${bodega.nombre}">
                                     </option>
                                 </select>
                             </div>
@@ -273,6 +273,7 @@
                                     <th>[[#{movimiento.tipo}]]</th>
                                     <th>[[#{movimiento.item}]]</th>
                                     <th>[[#{movimiento.cantidad}]]</th>
+                                    <th>[[#{movimiento.bodega}]]</th>
                                     <th>[[#{movimiento.motivo}]]</th>
                                     <th>[[#{movimiento.usuario}]]</th>
                                     <th>[[#{movimiento.observaciones}]]</th>
@@ -304,6 +305,11 @@
                                         <span th:if="${mov.tipo.name() == 'TRANSFERENCIA'}">
                                             [[${mov.cantidad}]]
                                         </span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${mov.bodegaDestino != null}" th:text="${mov.bodegaDestino.nombre}"></span>
+                                        <span th:if="${mov.bodegaOrigen != null and mov.bodegaDestino == null}" th:text="${mov.bodegaOrigen.nombre}"></span>
+                                        <span th:if="${mov.bodegaDestino == null and mov.bodegaOrigen == null}" class="text-muted">—</span>
                                     </td>
                                     <td>[[${mov.motivo}]]</td>
                                     <td>[[${mov.usuario.nombre}]]</td>

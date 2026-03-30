@@ -40,6 +40,14 @@ public class Movimiento implements Serializable {
     @Column(length = 255)
     private String observaciones;
 
+    @ManyToOne
+    @JoinColumn(name = "bodega_origen_id")
+    private Bodega bodegaOrigen;
+
+    @ManyToOne
+    @JoinColumn(name = "bodega_destino_id")
+    private Bodega bodegaDestino;
+
     @PrePersist
     public void prePersist() {
         this.fecha = LocalDateTime.now();

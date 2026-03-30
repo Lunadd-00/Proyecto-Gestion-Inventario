@@ -45,6 +45,7 @@
                                                 <th>[[#{movimiento.fecha}]]</th>
                                                 <th>[[#{movimiento.tipo}]]</th>
                                                 <th>[[#{movimiento.cantidad}]]</th>
+                                                <th>[[#{movimiento.bodega}]]</th>
                                                 <th>[[#{movimiento.motivo}]]</th>
                                                 <th>[[#{movimiento.usuario}]]</th>
                                                 <th>[[#{movimiento.observaciones}]]</th>
@@ -75,6 +76,11 @@
                                                     <span th:if="${mov.tipo.name() == 'TRANSFERENCIA'}">
                                                         [[${mov.cantidad}]]
                                                     </span>
+                                                </td>
+                                                <td>
+                                                    <span th:if="${mov.bodegaDestino != null}" th:text="${mov.bodegaDestino.nombre}"></span>
+                                                    <span th:if="${mov.bodegaOrigen != null and mov.bodegaDestino == null}" th:text="${mov.bodegaOrigen.nombre}"></span>
+                                                    <span th:if="${mov.bodegaDestino == null and mov.bodegaOrigen == null}" class="text-muted">—</span>
                                                 </td>
                                                 <td>[[${mov.motivo}]]</td>
                                                 <td>[[${mov.usuario.nombre}]]</td>

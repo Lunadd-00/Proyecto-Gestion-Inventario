@@ -2,9 +2,11 @@ package com.proyecto.GestionInventario.controller;
 
 import com.proyecto.GestionInventario.domain.Movimiento;
 import com.proyecto.GestionInventario.domain.TipoMovimiento;
+import com.proyecto.GestionInventario.domain.Usuario;
+import com.proyecto.GestionInventario.service.BodegaService;
 import com.proyecto.GestionInventario.service.ItemService;
 import com.proyecto.GestionInventario.service.MovimientoService;
-import com.proyecto.GestionInventario.service.UsuarioService;
+import jakarta.servlet.http.HttpSession;
 import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -18,22 +20,22 @@ public class MovimientoController {
 
     private final MovimientoService movimientoService;
     private final ItemService itemService;
-    private final UsuarioService usuarioService;
+    private final BodegaService bodegaService;
     private final MessageSource messageSource;
 
     public MovimientoController(MovimientoService movimientoService,
                                  ItemService itemService,
-                                 UsuarioService usuarioService,
+                                 BodegaService bodegaService,
                                  MessageSource messageSource) {
         this.movimientoService = movimientoService;
         this.itemService = itemService;
-        this.usuarioService = usuarioService;
+        this.bodegaService = bodegaService;
         this.messageSource = messageSource;
     }
 
     private void cargarListas(Model model) {
         model.addAttribute("items", itemService.getItems());
-        model.addAttribute("usuarios", usuarioService.getUsuarios(true));
+        model.addAttribute("bodegas", bodegaService.getBodegas());
         model.addAttribute("tiposMovimiento", TipoMovimiento.values());
     }
 
@@ -60,20 +62,24 @@ public class MovimientoController {
 
     @PostMapping("/entrada")
     public String registrarEntrada(@ModelAttribute("movimientoNuevo") Movimiento movimiento,
+                                    HttpSession session,
                                     RedirectAttributes redirectAttributes) {
+
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado == null) {
+            return "redirect:/login";
+        }
 
         if (movimiento.getItem() == null || movimiento.getItem().getId() == null) {
             redirectAttributes.addFlashAttribute("error", "Debe seleccionar un ítem.");
-            return "redirect:/movimiento/listado";
-        }
-        if (movimiento.getUsuario() == null || movimiento.getUsuario().getId() == null) {
-            redirectAttributes.addFlashAttribute("error", "Debe seleccionar un usuario.");
             return "redirect:/movimiento/listado";
         }
         if (movimiento.getCantidad() == null || movimiento.getCantidad() < 1) {
             redirectAttributes.addFlashAttribute("error", "La cantidad debe ser mayor a 0.");
             return "redirect:/movimiento/listado";
         }
+
+        movimiento.setUsuario(usuarioLogueado);
 
         try {
             movimientoService.registrarEntrada(movimiento);
@@ -95,20 +101,24 @@ public class MovimientoController {
 
     @PostMapping("/salida")
     public String registrarSalida(@ModelAttribute("movimientoNuevo") Movimiento movimiento,
+                                   HttpSession session,
                                    RedirectAttributes redirectAttributes) {
+
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado == null) {
+            return "redirect:/login";
+        }
 
         if (movimiento.getItem() == null || movimiento.getItem().getId() == null) {
             redirectAttributes.addFlashAttribute("error", "Debe seleccionar un ítem.");
-            return "redirect:/movimiento/listado";
-        }
-        if (movimiento.getUsuario() == null || movimiento.getUsuario().getId() == null) {
-            redirectAttributes.addFlashAttribute("error", "Debe seleccionar un usuario.");
             return "redirect:/movimiento/listado";
         }
         if (movimiento.getCantidad() == null || movimiento.getCantidad() < 1) {
             redirectAttributes.addFlashAttribute("error", "La cantidad debe ser mayor a 0.");
             return "redirect:/movimiento/listado";
         }
+
+        movimiento.setUsuario(usuarioLogueado);
 
         try {
             movimientoService.registrarSalida(movimiento);
