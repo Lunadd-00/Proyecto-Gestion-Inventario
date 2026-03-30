@@ -2,6 +2,7 @@ package com.proyecto.GestionInventario.controller;
 
 import com.proyecto.GestionInventario.domain.Usuario;
 import com.proyecto.GestionInventario.service.UsuarioService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,11 +30,13 @@ public class LoginController {
     @PostMapping("/procesar-login")
     public String procesarLogin(@RequestParam String correo,
             @RequestParam String password,
+            HttpSession session,
             Model model) {
 
         Usuario usuario = usuarioService.login(correo, password);
 
         if (usuario != null) {
+            session.setAttribute("usuarioLogueado", usuario);
             return "redirect:/index";
         } else {
             model.addAttribute("error", "Credenciales incorrectas o usuario inactivo");
