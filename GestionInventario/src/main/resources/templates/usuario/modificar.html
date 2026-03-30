@@ -3,14 +3,17 @@
     <head th:replace="~{general/fragmentos :: head}"/>
 
     <body>
-        <header th:replace="~{general/fragmentos :: header}"/>
+        <nav th:replace="~{general/fragmentos :: sidebar}"/>
+        <header th:replace="~{general/fragmentos :: barra-superior}"/>
 
+        <div class="contenedor-pagina">
         <div class="contenido-principal">
             <section th:replace="~{usuario/fragmentos :: editarUsuario}"/>
             <section th:replace="~{general/fragmentos :: mostrarToast}"/>
         </div>
 
         <footer th:replace="~{general/fragmentos :: footer}"/>
+        </div>
     </body>
 </html>
 

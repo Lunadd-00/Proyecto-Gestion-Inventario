@@ -15,46 +15,54 @@
         <link th:href="@{/css/estilos.css}" rel="stylesheet"/>
     </head>
 
-    <header th:fragment="header" class="header">
+    <nav th:fragment="sidebar" class="sidebar d-flex flex-column">
+        <ul class="sidebar-nav flex-grow-1">
+            <li>
+                <a th:href="@{/item/listado}">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>[[#{plantilla.items}]]</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/movimiento/listado}">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>[[#{plantilla.movimientos}]]</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/categoria/listado}">
+                    <i class="fa-solid fa-tags"></i>
+                    <span>[[#{plantilla.categorias}]]</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/proveedor/listado}">
+                    <i class="fa-solid fa-truck"></i>
+                    <span>[[#{plantilla.proveedor}]]</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/usuario/listado}">
+                    <i class="fa-solid fa-users"></i>
+                    <span>[[#{plantilla.usuarios}]]</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container">
-                <a th:href="@{/}" class="navbar-brand"> <img th:src="@{/img/Logo-Municipalidad-Escazu.png}"/> [[#{aplicacion.nombre}]]</a>
-                <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                    <ul class="navbar-nav">
-                        <li class="nav-item px-2">
-                            <a class="nav-link" th:href="@{/item/listado}">[[#{plantilla.items}]]
-                            </a>
-                        </li>
-                        <li class="nav-item px-2">
-                            <a class="nav-link" th:href="@{/movimiento/listado}">[[#{plantilla.movimientos}]]
-                            </a>
-                        </li>
-                        <li class="nav-item px-2">
-                            <a class="nav-link" th:href="@{/categoria/listado}">[[#{plantilla.categorias}]]
-                            </a>
-                        </li>
-                        <li class="nav-item px-2">
-                            <a class="nav-link" th:href="@{/proveedor/listado}">[[#{plantilla.proveedor}]]
-                            </a>
-                        </li>
-                        <li class="nav-item px-2">
-                            <a class="nav-link" th:href="@{/usuario/listado}">[[#{plantilla.usuarios}]]
-                            </a>
-                        </li>
-                    </ul>
-                    <div>
-                        <a th:href="@{?lang=es}" 
-                           th:classappend="${#locale.language == 'es'} ? 'btn-light' : 'btn-outline-light'" 
-                           class="btn btn-sm me-1">ES</a>
-                        <a th:href="@{?lang=en}" 
-                           th:classappend="${#locale.language == 'en'} ? 'btn-light' : 'btn-outline-light'" 
-                           class="btn btn-sm">EN</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
+    <header th:fragment="barra-superior" class="barra-superior">
+        <a th:href="@{/}" class="barra-superior-brand">
+            <img th:src="@{/img/Logo-Municipalidad-Escazu.png}" alt="Logo"/>
+            <span>[[#{aplicacion.nombre}]]</span>
+        </a>
+        <div class="barra-superior-lang">
+            <a th:href="@{?lang=es}"
+               th:classappend="${#locale.language == 'es'} ? 'active'"
+               class="btn btn-sm me-1">ES</a>
+            <a th:href="@{?lang=en}"
+               th:classappend="${#locale.language == 'en'} ? 'active'"
+               class="btn btn-sm">EN</a>
+        </div>
     </header>
 
     <footer th:fragment="footer" class="footer text-white text-center p-3">

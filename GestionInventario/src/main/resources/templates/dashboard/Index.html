@@ -6,8 +6,10 @@
     <head th:replace="~{general/fragmentos :: head}"></head>
 
     <body>
-        <header th:replace="~{general/fragmentos :: header}"></header>
+        <nav th:replace="~{general/fragmentos :: sidebar}"></nav>
+        <header th:replace="~{general/fragmentos :: barra-superior}"></header>
 
+        <div class="contenedor-pagina">
         <div class="contenido-principal">
             <div class="container mt-5">
                 <div class="row justify-content-center">
@@ -54,6 +56,7 @@
         </div>
 
         <footer th:replace="~{general/fragmentos :: footer}"></footer>
+        </div>
     </body>
 
 </html>

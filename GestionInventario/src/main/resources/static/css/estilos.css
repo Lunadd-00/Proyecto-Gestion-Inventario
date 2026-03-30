@@ -23,7 +23,100 @@ html{
 body{
     min-height: 100%;
     display: flex;
+    flex-direction: row;
+}
+
+.sidebar{
+    width: 240px;
+    min-height: 100vh;
+    background-color: var(--escazu-turquesa);
+    position: fixed;
+    top: 56px;
+    left: 0;
+    z-index: 1030;
+    padding: 0;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.15);
+}
+
+.sidebar-nav{
+    list-style: none;
+    padding: 12px 0;
+    margin: 0;
+}
+
+.sidebar-nav li a{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.sidebar-nav li a:hover{
+    background-color: rgba(255,255,255,0.15);
+    color: white;
+}
+
+.sidebar-nav li a i{
+    width: 20px;
+    text-align: center;
+}
+
+/* Barra superior */
+.barra-superior{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background-color: var(--escazu-verde-oscuro);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 1040;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.barra-superior-brand{
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.barra-superior-brand:hover{
+    color: white;
+}
+
+.barra-superior-brand img{
+    height: 36px;
+}
+
+.barra-superior-lang .btn{
+    color: white;
+    border: 1px solid rgba(255,255,255,0.4);
+}
+
+.barra-superior-lang .btn.active{
+    background-color: white;
+    color: var(--escazu-verde-oscuro);
+    font-weight: 600;
+}
+
+.contenedor-pagina{
+    margin-left: 240px;
+    margin-top: 56px;
+    display: flex;
     flex-direction: column;
+    min-height: calc(100vh - 56px);
+    width: calc(100% - 240px);
 }
 
 .contenido-principal{
@@ -45,37 +138,6 @@ footer{
     background-color: var(--escazu-rosa) !important;
     color: white;
 }
-
-.header{
-    background-color: var(--escazu-turquesa);
-}
-
-.navbar{
-    background-color: var(--escazu-turquesa);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-}
-
-.navbar-brand{
-    color:white !important;
-    font-weight:600;
-}
-
-.navbar-brand img{
-    height: 40px;
-    margin-right: 8px;
-}
-
-.nav-link{
-    color:white !important;
-    transition: color 0.2s ease;
-    border-radius: 4px;
-}
-
-.nav-link:hover{
-    color: var(--escazu-morado) !important;
-    background-color: rgba(255,255,255,0.15);
-}
-
 
 .btn-primary{
     background-color: var(--escazu-verde); 

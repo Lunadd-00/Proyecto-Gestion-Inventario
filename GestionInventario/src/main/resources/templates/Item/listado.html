@@ -4,8 +4,10 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     <head th:replace="~{general/fragmentos :: head}"/>
     <body>
-        <header th:replace="~{general/fragmentos :: header}"/>
+        <nav th:replace="~{general/fragmentos :: sidebar}"/>
+        <header th:replace="~{general/fragmentos :: barra-superior}"/>
 
+        <div class="contenedor-pagina">
         <div class="contenido-principal">
             <section th:replace="~{item/fragmentos :: agregarItem}"/>
             <section th:replace="~{item/fragmentos :: listadoItem}"/>
@@ -15,5 +17,6 @@
         </div>
 
         <footer th:replace="~{general/fragmentos :: footer}"/>
+        </div>
     </body>
 </html>

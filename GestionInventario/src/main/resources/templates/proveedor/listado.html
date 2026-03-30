@@ -5,8 +5,10 @@
     <head th:replace="~{general/fragmentos :: head}">
     </head>
     <body>
-        <header th:replace="~{general/fragmentos :: header}"/>
+        <nav th:replace="~{general/fragmentos :: sidebar}"/>
+        <header th:replace="~{general/fragmentos :: barra-superior}"/>
 
+        <div class="contenedor-pagina">
         <div class="contenido-principal">
             <section th:replace="~{proveedor/fragmentos :: agregarProveedor}"/>
             <section th:replace="~{proveedor/fragmentos :: listadoProveedor}"/>
@@ -15,6 +17,7 @@
         </div>
 
         <footer th:replace="~{general/fragmentos :: footer}"/>
+        </div>
 
     </body>
 </html>

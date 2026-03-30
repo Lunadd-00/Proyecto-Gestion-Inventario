@@ -3,8 +3,10 @@
       xmlns:th="http://www.thymeleaf.org">
     <head th:replace="~{general/fragmentos :: head}"/>
     <body>
-        <header th:replace="~{general/fragmentos :: header}"/>
+        <nav th:replace="~{general/fragmentos :: sidebar}"/>
+        <header th:replace="~{general/fragmentos :: barra-superior}"/>
 
+        <div class="contenedor-pagina">
         <div class="contenido-principal">
             <section class="p-3">
                 <div class="row py-4 mb-2 bg-light">
@@ -95,5 +97,6 @@
         </div>
 
         <footer th:replace="~{general/fragmentos :: footer}"/>
+        </div>
     </body>
 </html>
