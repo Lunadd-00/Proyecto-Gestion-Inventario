@@ -17,6 +17,14 @@
                 <i class="fa-solid fa-arrow-up"></i>
                 [[#{movimiento.registrarSalida}]]
             </button>
+
+            <button type="button"
+                    class="btn btn-warning"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalTransferencia">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                [[#{movimiento.registrarTransferencia}]]
+            </button>
         </div>
     </div>
 </section>
@@ -221,6 +229,108 @@
 </section>
 
 
+<section th:fragment="modalTransferencia">
+    <div class="modal fade"
+         id="modalTransferencia"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        [[#{movimiento.registrarTransferencia}]]
+                    </h5>
+                    <button type="button"
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/movimiento/transferencia}"
+                      th:object="${movimientoNuevo}"
+                      method="post"
+                      class="was-validated">
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label>[[#{movimiento.item}]] *</label>
+                            <select class="form-select" name="item.id" id="itemTransferencia" required
+                                    onchange="actualizarStockTransferencia()">
+                                <option value="">-- [[#{movimiento.seleccioneItem}]] --</option>
+                                <option th:each="item : ${items}"
+                                        th:if="${item.stock > 0}"
+                                        th:value="${item.id}"
+                                        th:text="${item.nombre + ' (Stock: ' + item.stock + ' ' + item.unidadMedida + ')'}"
+                                        th:data-stock="${item.stock}"
+                                        th:data-unidad="${item.unidadMedida}">
+                                </option>
+                            </select>
+                            <small class="text-muted" id="stockDisponibleTransferencia"></small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>[[#{movimiento.cantidad}]] *</label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   name="cantidad" 
+                                   id="cantidadTransferencia"
+                                   min="1" 
+                                   required/>
+                            <small class="text-danger" id="errorStockTransferencia" style="display:none;">
+                                [[#{movimiento.errorStockInsuficiente}]]
+                            </small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{movimiento.bodegaOrigen}]] *</label>
+                                <select class="form-select" name="bodegaOrigen.id" id="bodegaOrigenTransferencia" required>
+                                    <option value="">-- [[#{movimiento.seleccioneBodega}]] --</option>
+                                    <option th:each="bodega : ${bodegas}"
+                                            th:value="${bodega.id}"
+                                            th:text="${bodega.nombre}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{movimiento.bodegaDestino}]] *</label>
+                                <select class="form-select" name="bodegaDestino.id" id="bodegaDestinoTransferencia" required>
+                                    <option value="">-- [[#{movimiento.seleccioneBodega}]] --</option>
+                                    <option th:each="bodega : ${bodegas}"
+                                            th:value="${bodega.id}"
+                                            th:text="${bodega.nombre}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>[[#{movimiento.observaciones}]]</label>
+                            <textarea class="form-control" 
+                                      name="observaciones" 
+                                      rows="2"
+                                      maxlength="255"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i>
+                            [[#{accion.cerrar}]]
+                        </button>
+                        <button type="submit" class="btn btn-warning text-white" id="btnConfirmarTransferencia">
+                            <i class="fa-solid fa-check"></i>
+                            [[#{movimiento.confirmarTransferencia}]]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
 <section th:fragment="listadoMovimiento" class="p-3">
 
     <div class="row px-3 mb-2 justify-content-center">
@@ -243,6 +353,7 @@
                         <option value="">[[#{item.todos}]]</option>
                         <option value="ENTRADA" th:selected="${tipoSeleccionado != null and tipoSeleccionado.name() == 'ENTRADA'}">[[#{movimiento.tipo.entrada}]]</option>
                         <option value="SALIDA" th:selected="${tipoSeleccionado != null and tipoSeleccionado.name() == 'SALIDA'}">[[#{movimiento.tipo.salida}]]</option>
+                        <option value="TRANSFERENCIA" th:selected="${tipoSeleccionado != null and tipoSeleccionado.name() == 'TRANSFERENCIA'}">[[#{movimiento.tipo.transferencia}]]</option>
                     </select>
                 </div>
                 <div class="col-md-4 d-flex gap-2">
@@ -377,6 +488,46 @@
             if (cantidadSalida) {
                 cantidadSalida.addEventListener('input', validarCantidadSalida);
             }
+            var cantidadTransferencia = document.getElementById('cantidadTransferencia');
+            if (cantidadTransferencia) {
+                cantidadTransferencia.addEventListener('input', validarCantidadTransferencia);
+            }
         });
+
+        var stockActualTransferencia = 0;
+
+        function actualizarStockTransferencia() {
+            var select = document.getElementById('itemTransferencia');
+            var selectedOption = select.options[select.selectedIndex];
+            var stockInfo = document.getElementById('stockDisponibleTransferencia');
+            var cantidadInput = document.getElementById('cantidadTransferencia');
+
+            if (selectedOption.value) {
+                stockActualTransferencia = parseInt(selectedOption.getAttribute('data-stock'));
+                var unidad = selectedOption.getAttribute('data-unidad');
+                stockInfo.textContent = 'Stock disponible: ' + stockActualTransferencia + ' ' + unidad;
+                cantidadInput.setAttribute('max', stockActualTransferencia);
+            } else {
+                stockActualTransferencia = 0;
+                stockInfo.textContent = '';
+                cantidadInput.removeAttribute('max');
+            }
+            validarCantidadTransferencia();
+        }
+
+        function validarCantidadTransferencia() {
+            var cantidadInput = document.getElementById('cantidadTransferencia');
+            var errorSpan = document.getElementById('errorStockTransferencia');
+            var btnConfirmar = document.getElementById('btnConfirmarTransferencia');
+            var cantidad = parseInt(cantidadInput.value) || 0;
+
+            if (stockActualTransferencia > 0 && cantidad > stockActualTransferencia) {
+                errorSpan.style.display = 'block';
+                btnConfirmar.disabled = true;
+            } else {
+                errorSpan.style.display = 'none';
+                btnConfirmar.disabled = false;
+            }
+        }
     </script>
 </th:block>

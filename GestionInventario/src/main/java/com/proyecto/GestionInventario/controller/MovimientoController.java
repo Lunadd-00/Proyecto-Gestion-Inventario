@@ -140,6 +140,47 @@ public class MovimientoController {
         return "redirect:/movimiento/listado";
     }
 
+    @PostMapping("/transferencia")
+    public String registrarTransferencia(@ModelAttribute("movimientoNuevo") Movimiento movimiento,
+                                          HttpSession session,
+                                          RedirectAttributes redirectAttributes) {
+
+        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuarioLogueado == null) {
+            return "redirect:/login";
+        }
+
+        if (movimiento.getItem() == null || movimiento.getItem().getId() == null) {
+            redirectAttributes.addFlashAttribute("error", "Debe seleccionar un ítem.");
+            return "redirect:/movimiento/listado";
+        }
+        if (movimiento.getCantidad() == null || movimiento.getCantidad() < 1) {
+            redirectAttributes.addFlashAttribute("error", "La cantidad debe ser mayor a 0.");
+            return "redirect:/movimiento/listado";
+        }
+
+        movimiento.setUsuario(usuarioLogueado);
+
+        try {
+            movimientoService.registrarTransferencia(movimiento);
+            redirectAttributes.addFlashAttribute(
+                    "todoOk",
+                    messageSource.getMessage("movimiento.transferencia.exitoso", null, Locale.getDefault())
+            );
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    messageSource.getMessage("movimiento.error.general", null, Locale.getDefault())
+            );
+        }
+
+        return "redirect:/movimiento/listado";
+    }
+
     @GetMapping("/historial/{itemId}")
     public String historialPorItem(@PathVariable Long itemId, Model model) {
         var movimientos = movimientoService.getMovimientosPorItem(itemId);

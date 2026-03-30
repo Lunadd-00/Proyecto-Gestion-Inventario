@@ -92,6 +92,37 @@ public class MovimientoService {
         movimientoRepository.save(movimiento);
     }
 
+    @Transactional
+    public void registrarTransferencia(Movimiento movimiento) {
+        movimiento.setTipo(TipoMovimiento.TRANSFERENCIA);
+
+        Item item = movimiento.getItem();
+        if (item == null || item.getId() == null) {
+            throw new IllegalArgumentException("Debe seleccionar un ítem válido.");
+        }
+
+        Item itemActual = itemRepository.findById(item.getId())
+                .orElseThrow(() -> new IllegalArgumentException("El ítem no existe."));
+
+        if (movimiento.getCantidad() > itemActual.getStock()) {
+            throw new IllegalStateException(
+                    "No hay stock suficiente. Stock disponible: " + itemActual.getStock());
+        }
+
+        if (movimiento.getBodegaOrigen() == null || movimiento.getBodegaOrigen().getId() == null) {
+            throw new IllegalArgumentException("Debe seleccionar la bodega de origen.");
+        }
+        if (movimiento.getBodegaDestino() == null || movimiento.getBodegaDestino().getId() == null) {
+            throw new IllegalArgumentException("Debe seleccionar la bodega de destino.");
+        }
+        if (movimiento.getBodegaOrigen().getId().equals(movimiento.getBodegaDestino().getId())) {
+            throw new IllegalArgumentException("La bodega de origen y destino deben ser diferentes.");
+        }
+
+        movimiento.setItem(itemActual);
+        movimientoRepository.save(movimiento);
+    }
+
     @Transactional(readOnly = true)
     public List<Movimiento> getMovimientosPorItem(Long itemId) {
         return movimientoRepository.findByItemIdOrderByFechaDesc(itemId);
