@@ -258,3 +258,111 @@ footer{
     border-color: var(--escazu-turquesa);
     box-shadow: 0 0 0 0.2rem rgba(28, 182, 184, 0.25);
 }
+
+.acceso-denegado-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 120px);
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(28, 182, 184, 0.05) 0%, rgba(107, 63, 209, 0.03) 100%);
+}
+
+.acceso-denegado-card {
+    background: white;
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    box-shadow: 
+        0 10px 30px rgba(0,0,0,0.1),
+        0 1px 8px rgba(0,0,0,0.05);
+    max-width: 500px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.acceso-denegado-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--escazu-naranja), var(--escazu-rosa));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 8px 25px rgba(248, 104, 40, 0.3);
+}
+
+.acceso-denegado-icon i {
+    font-size: 2.2rem;
+    color: white;
+}
+
+.acceso-denegado-titulo {
+    color: black;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.acceso-denegado-texto {
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn-volver {
+    background: linear-gradient(135deg, var(--escazu-turquesa), var(--escazu-verde-claro));
+    border: none;
+    color: white !important;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(28, 182, 184, 0.3);
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-volver:hover {
+    background: linear-gradient(135deg, var(--escazu-verde-oscuro), var(--escazu-verde-claro));
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(28, 182, 184, 0.4);
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .acceso-denegado-container {
+        min-height: calc(100vh - 100px);
+        padding: 1rem;
+    }
+    
+    .acceso-denegado-card {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+    }
+    
+    .acceso-denegado-titulo {
+        font-size: 1.8rem;
+    }
+    
+    .acceso-denegado-icon {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .acceso-denegado-icon i {
+        font-size: 2rem;
+    }
+}

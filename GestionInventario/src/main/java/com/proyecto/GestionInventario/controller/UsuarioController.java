@@ -4,7 +4,6 @@ import com.proyecto.GestionInventario.domain.Usuario;
 import com.proyecto.GestionInventario.service.UsuarioService;
 import jakarta.validation.Valid;
 import java.util.Locale;
-import java.util.Optional;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +36,7 @@ public class UsuarioController {
         model.addAttribute("usuarios", usuarios);
         model.addAttribute("totalUsuarios", usuarios.size());
         model.addAttribute("activoSeleccionado", activo);
+        model.addAttribute("usuarioNuevo", new Usuario());
         return "/usuario/listado";
     }
 
@@ -45,7 +45,7 @@ public class UsuarioController {
         usuarioService.save(usuario);
 
         redirectAttributes.addFlashAttribute("todoOk",
-                messageSource.getMessage("mensaje.guardado", null, Locale.getDefault()));
+                messageSource.getMessage("mensaje.creado", null, Locale.getDefault()));
         return "redirect:/usuario/listado";
     }
 
@@ -59,15 +59,16 @@ public class UsuarioController {
 
     @GetMapping("/modificar/{id}")
     public String modificar(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
-        Optional<Usuario> usuarioOpt = usuarioService.getUsuario(id);
 
-        if (usuarioOpt.isEmpty()) {
+        try {
+            Usuario usuario = usuarioService.getUsuario(id);
+            model.addAttribute("usuario", usuario);
+            return "/usuario/modificar";
+
+        } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error",
                     messageSource.getMessage("usuario.error01", null, Locale.getDefault()));
             return "redirect:/usuario/listado";
         }
-
-        model.addAttribute("usuario", usuarioOpt.get());
-        return "/usuario/modificar";
     }
 }

@@ -155,3 +155,34 @@ INSERT INTO movimiento (item_id, usuario_id, tipo, cantidad, motivo, bodega_dest
 (1, 2, 'ENTRADA',  10, 'Compra inicial',              1),
 (2, 2, 'SALIDA',    2, 'Uso en simulacro',           NULL),
 (4, 2, 'ENTRADA',  50, 'Reposición de inventario',    1);
+
+CREATE TABLE ruta (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ruta VARCHAR(255) NOT NULL,
+    requiere_rol BOOLEAN NOT NULL,
+    rol ENUM('ADMIN','COLABORADOR') NULL
+);
+
+-- públicas  
+INSERT INTO ruta (ruta, requiere_rol, rol) VALUES  
+('/login', false, NULL),  
+('/css/**', false, NULL),  
+('/js/**', false, NULL),  
+('/images/**', false, NULL),  
+('/webjars/**', false, NULL);  
+
+-- dashboard  
+INSERT INTO ruta (ruta, requiere_rol, rol) VALUES  
+('/', true, NULL),  
+('/index', true, NULL);  
+
+-- ADMIN  
+INSERT INTO ruta (ruta, requiere_rol, rol) VALUES  
+('/categoria/**', true, 'ADMIN'),  
+('/usuario/**', true, 'ADMIN'),  
+('/proveedor/**', true, 'ADMIN');  
+
+-- COLABORADOR  
+INSERT INTO ruta (ruta, requiere_rol, rol) VALUES  
+('/item/**', true, 'COLABORADOR'),  
+('/movimiento/**', true, 'COLABORADOR');

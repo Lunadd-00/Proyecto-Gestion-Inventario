@@ -60,13 +60,13 @@
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input type="hidden" name="activo" value="false"/>
-                                <input class="form-check-input" type="checkbox"
-                                       id="activoNuevo" name="activo" value="true" checked/>
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       th:field="*{activo}"
+                                       id="activoNuevo"/>
                                 <label class="form-check-label" for="activoNuevo">
                                     [[#{usuario.activo}]]
                                 </label>
-
                             </div>
                         </div>
 

@@ -47,11 +47,17 @@
                     <span>[[#{plantilla.usuarios}]]</span>
                 </a>
             </li>
+            <li>
+                <a th:href="@{/login}">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>[[#{plantilla.usuariocambiar}]]</span>
+                </a>
+            </li>
         </ul>
     </nav>
 
     <header th:fragment="barra-superior" class="barra-superior">
-        <a th:href="@{/}" class="barra-superior-brand">
+        <a th:href="@{/dashboard/index}" class="barra-superior-brand">
             <img th:src="@{/img/Logo-Municipalidad-Escazu.png}" alt="Logo"/>
             <span>[[#{aplicacion.nombre}]]</span>
         </a>

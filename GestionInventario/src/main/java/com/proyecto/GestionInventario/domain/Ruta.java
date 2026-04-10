@@ -8,37 +8,26 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.io.Serializable;
 import lombok.Data;
 
 /**
  *
  * @author abbyc
  */
-@Data
 @Entity
-@Table(name = "usuario")
-public class Usuario implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+@Table(name = "ruta")
+@Data
+public class Ruta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, length = 100)
-    private String nombre;
+    private String ruta;
 
-    @Column(unique = true, nullable = false, length = 100)
-    private String correo;
-
-    @Column(nullable = false, length = 255)
-    private String password;
+    @Column(name = "requiere_rol")
+    private boolean requiereRol;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Rol rol;
-
-    @Column(nullable = false)
-    private Boolean activo = true;
 }

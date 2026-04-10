@@ -1,7 +1,10 @@
-
 package com.proyecto.GestionInventario;
 
+import com.proyecto.GestionInventario.domain.Rol;
+import com.proyecto.GestionInventario.domain.Usuario;
+import com.proyecto.GestionInventario.service.UsuarioService;
 import java.util.Locale;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,11 +23,11 @@ import org.thymeleaf.templatemode.TemplateMode;
  * @author lunad
  */
 @Configuration
-public class ProjectConfig implements WebMvcConfigurer{
-    
+public class ProjectConfig implements WebMvcConfigurer {
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("index");
+        registry.addViewController("/").setViewName("login");
     }
 
     @Bean
@@ -65,6 +68,5 @@ public class ProjectConfig implements WebMvcConfigurer{
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
-    }
-    
+    }  
 }

@@ -3,8 +3,7 @@ package com.proyecto.GestionInventario.service;
 import com.proyecto.GestionInventario.domain.Usuario;
 import com.proyecto.GestionInventario.repository.UsuarioRepository;
 import java.util.List;
-import java.util.Optional;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository,
+            PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -30,35 +32,41 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Usuario> getUsuario(Integer idUsuario) {
-        return usuarioRepository.findById(idUsuario);
+    public Usuario getUsuario(Integer idUsuario) {
+        return usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
     }
 
     @Transactional
     public void save(Usuario usuario) {
+
+        if (!usuario.getPassword().startsWith("$2a$")) {
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        }
+
         usuarioRepository.save(usuario);
     }
 
     @Transactional
     public void toggleActivo(Integer idUsuario) {
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
-        usuario.setActivo(Boolean.FALSE.equals(usuario.getActivo()));
+        Usuario usuario = getUsuario(idUsuario);
+
+        usuario.setActivo(!usuario.getActivo());
+
         usuarioRepository.save(usuario);
     }
 
     @Transactional(readOnly = true)
     public Usuario login(String correo, String password) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo);
 
-        if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
+        Usuario usuario = usuarioRepository
+                .findByCorreoAndActivoTrue(correo)
+                .orElse(null);
 
-            if (usuario.getPassword().equals(password) && usuario.getActivo()) {
-                return usuario;
-            }
+        if (usuario != null
+                && passwordEncoder.matches(password, usuario.getPassword())) {
+            return usuario;
         }
-
         return null;
     }
 }

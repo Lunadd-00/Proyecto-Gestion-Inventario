@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+    <head th:replace="~{general/fragmentos :: head}"></head>
+
+    <body>
+
+        <nav th:replace="~{general/fragmentos :: sidebar}"></nav>
+        <header th:replace="~{general/fragmentos :: barra-superior}"></header>
+
+        <div class="contenedor-pagina">
+            <div class="contenido-principal">
+                <div class="acceso-denegado-container">
+                    <div class="acceso-denegado-card">
+                        <div class="acceso-denegado-icon">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <h1 class="acceso-denegado-titulo">Acceso Denegado</h1>
+                        <p class="acceso-denegado-texto">
+                            No tienes permisos para acceder a esta página.
+                        </p>
+                        <a th:href="@{/index}" class="btn btn-volver">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Volver al Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <footer th:replace="~{general/fragmentos :: footer}"></footer>
+        </div>
+    </body>
+</html>

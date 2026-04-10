@@ -4,14 +4,11 @@
             <h4>Iniciar Sesion</h4>
         </div>
         <div class="card-body">
-            <div th:if="${error}" class="alert alert-danger">
-                <span th:text="${error}"></span>
-            </div>
-            <form th:action="@{/procesar-login}" method="post">
+            <form th:action="@{/login}" method="post">
                 <div class="mb-3">
                     <label class="form-label">[[#{login.correo}]]</label>
                     <input type="email"
-                           name="correo"
+                           name="username"
                            class="form-control"
                            placeholder="Ingrese su correo"
                            required>
@@ -30,6 +27,10 @@
                     </button>
                 </div>
             </form>
+
+            <div th:if="${param.error}" class="alert alert-danger">
+                Credenciales incorrectas
+            </div>
         </div>
     </div>
 </section>
