@@ -142,8 +142,8 @@ INSERT INTO bodega (nombre, ubicacion) VALUES
 
 -- Nota: reemplazar los password con hashes BCrypt reales antes de la entrega
 INSERT INTO usuario (nombre, correo, password, rol) VALUES
-('Administrador Sistema', 'admin@inventario.com',  '$2a$10$reemplazarConHashBCrypt', 'ADMIN'),
-('Carlos Perez',          'carlos@inventario.com', '$2a$10$reemplazarConHashBCrypt', 'COLABORADOR');
+('Administrador Sistema', 'admin@inventario.com',  '$2a$10$CCvSwJAKfi2FM9cKyZ5ybeW9jU.NDPX/Ht7Vk5S2AtP5UngsdOtKK', 'ADMIN'),
+('Carlos Perez',          'carlos@inventario.com', '$2a$10$CCvSwJAKfi2FM9cKyZ5ybeW9jU.NDPX/Ht7Vk5S2AtP5UngsdOtKK', 'COLABORADOR');
 
 INSERT INTO item (nombre, descripcion, categoria_id, proveedor_id, stock, stock_minimo, unidad_medida, tiene_caducidad, fecha_caducidad) VALUES
 ('Botiquín de primeros auxilios', 'Kit completo de emergencias', 2, 2, 20,  5,  'Kit',    TRUE,  '2027-05-01'),
@@ -168,13 +168,14 @@ INSERT INTO ruta (ruta, requiere_rol, rol) VALUES
 ('/login', false, NULL),  
 ('/css/**', false, NULL),  
 ('/js/**', false, NULL),  
-('/images/**', false, NULL),  
+('/img/**', false, NULL),  
 ('/webjars/**', false, NULL);  
 
 -- dashboard  
 INSERT INTO ruta (ruta, requiere_rol, rol) VALUES  
 ('/', true, NULL),  
-('/index', true, NULL);  
+('/index', true, NULL),
+('/dashboard/**', true, NULL); 
 
 -- ADMIN  
 INSERT INTO ruta (ruta, requiere_rol, rol) VALUES  
@@ -186,3 +187,11 @@ INSERT INTO ruta (ruta, requiere_rol, rol) VALUES
 INSERT INTO ruta (ruta, requiere_rol, rol) VALUES  
 ('/item/**', true, 'COLABORADOR'),  
 ('/movimiento/**', true, 'COLABORADOR');
+
+UPDATE item  
+SET fecha_caducidad = CURDATE() + INTERVAL 10 DAY  
+WHERE id = 1;
+
+UPDATE item  
+SET stock = 2  
+WHERE id = 2;

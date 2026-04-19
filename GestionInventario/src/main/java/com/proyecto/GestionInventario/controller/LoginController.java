@@ -15,11 +15,6 @@ public class LoginController {
         return "login";
     }
 
-    @GetMapping("/index")
-    public String homePage() {
-        return "dashboard/index";
-    }
-
     @GetMapping("/acceso_denegado")
     public String accesoDenegado() {
         return "error/acceso_denegado";

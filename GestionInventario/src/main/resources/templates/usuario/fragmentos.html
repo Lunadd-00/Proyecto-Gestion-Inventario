@@ -140,8 +140,8 @@
                                     <td>[[${usuario.nombre}]]</td>
                                     <td>[[${usuario.correo}]]</td>
                                     <td>
-                                        <span th:if="${usuario.rol == 'ADMIN'}" class="badge bg-primary">Administrador</span>
-                                        <span th:unless="${usuario.rol == 'ADMIN'}" class="badge bg-secondary">Colaborador</span>
+                                        <span th:if="${usuario.rol.name() == 'ADMIN'}" class="badge bg-primary">Administrador</span>
+                                        <span th:unless="${usuario.rol.name() == 'ADMIN'}" class="badge bg-secondary">Colaborador</span>
                                     </td>
                                     <td th:text="${usuario.activo} ? 'Sí' : 'No'"></td>
                                     <td>

@@ -31,7 +31,7 @@ public class SecurityConfig {
             requests.requestMatchers(
                     "/css/**",
                     "/js/**",
-                    "/images/**",
+                    "/img/**",
                     "/webjars/**"
             ).permitAll();
 
@@ -51,7 +51,7 @@ public class SecurityConfig {
         http.formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/index", true)
+                .defaultSuccessUrl("/dashboard", true)
                 .failureUrl("/login?error=true")
                 .permitAll()
         );

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
     <head th:fragment="head">
         <title>[[#{aplicacion.titulo}]]</title>
         <meta charset="UTF-8"/>
-        <link rel="icon" type="image/png" href="/img/Logo-Municipalidad-Escazu-V_color.png"/>
+        <link rel="icon" type="image/png" href="/img/Logo-Municipalidad-Escazu-V_blanco.png"/>
         <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
         <link th:href="@{/webjars/font-awesome/css/all.css}" rel="stylesheet"/>
         <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
@@ -17,6 +18,14 @@
 
     <nav th:fragment="sidebar" class="sidebar d-flex flex-column">
         <ul class="sidebar-nav flex-grow-1">
+
+            <li>
+                <a th:href="@{/dashboard}">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>[[#{plantilla.dashboard}]]</span>
+                </a>
+            </li>
+
             <li>
                 <a th:href="@{/item/listado}">
                     <i class="fa-solid fa-boxes-stacked"></i>
@@ -57,17 +66,27 @@
     </nav>
 
     <header th:fragment="barra-superior" class="barra-superior">
-        <a th:href="@{/dashboard/index}" class="barra-superior-brand">
-            <img th:src="@{/img/Logo-Municipalidad-Escazu.png}" alt="Logo"/>
+        <a th:href="@{/dashboard}" class="barra-superior-brand">
+            <img th:src="@{/img/Logo-Municipalidad-Escazu-V_blanco.png}" alt="Logo"/>
             <span>[[#{aplicacion.nombre}]]</span>
         </a>
-        <div class="barra-superior-lang">
-            <a th:href="@{?lang=es}"
-               th:classappend="${#locale.language == 'es'} ? 'active'"
-               class="btn btn-sm me-1">ES</a>
-            <a th:href="@{?lang=en}"
-               th:classappend="${#locale.language == 'en'} ? 'active'"
-               class="btn btn-sm">EN</a>
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div sec:authorize="isAuthenticated()" class="text-white">
+                <i class="fas fa-user me-1"></i>
+                <span sec:authentication="name"></span>
+            </div>
+
+            <div class="barra-superior-lang">
+                <a th:href="@{?lang=es}"
+                   th:classappend="${#locale.language == 'es'} ? 'active'"
+                   class="btn btn-sm me-1">ES</a>
+                <a th:href="@{?lang=en}"
+                   th:classappend="${#locale.language == 'en'} ? 'active'"
+                   class="btn btn-sm">EN</a>
+            </div>
+
         </div>
     </header>
 
@@ -104,7 +123,6 @@
                 </div>
             </div>
 
-            <!-- EXITO -->
             <div th:if="${todoOk}"
                  class="toast show"
                  role="status"

@@ -3,60 +3,172 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
-    <head th:replace="~{general/fragmentos :: head}"></head>
+<head th:replace="~{general/fragmentos :: head}"></head>
 
-    <body>
-        <nav th:replace="~{general/fragmentos :: sidebar}"></nav>
-        <header th:replace="~{general/fragmentos :: barra-superior}"></header>
+<body>
+    <nav th:replace="~{general/fragmentos :: sidebar}"></nav>
+    <header th:replace="~{general/fragmentos :: barra-superior}"></header>
 
-        <div class="contenedor-pagina">
+    <div class="contenedor-pagina">
         <div class="contenido-principal">
+
             <div class="container mt-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-8 text-center">
-                        <h2 class="mb-3">[[#{aplicacion.nombre}]]</h2>
-                        <p class="text-muted">Seleccione una opcion del menu para comenzar.</p>
-                    </div>
+
+                <div class="row mb-4 text-center">
+                    <h2>[[#{dashboard.titulo}]]</h2>
+                    <p class="text-muted">[[#{dashboard.subtitulo}]]</p>
                 </div>
-                <div class="row justify-content-center mt-4 g-3">
-                    <div class="col-md-3">
-                        <a th:href="@{/item/listado}" class="text-decoration-none">
-                            <div class="card text-center p-4">
-                                <i class="fa-solid fa-boxes-stacked fa-2x mb-2" style="color: var(--escazu-turquesa);"></i>
-                                <h6>[[#{plantilla.items}]]</h6>
-                            </div>
-                        </a>
+
+                <div class="row mb-4 text-center">
+
+                    <div class="col-md-4">
+                        <div class="card p-3">
+                            <h6>[[#{dashboard.totalItems}]]</h6>
+                            <h4 th:text="${metricas != null ? metricas.totalItems : 0}"></h4>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <a th:href="@{/movimiento/listado}" class="text-decoration-none">
-                            <div class="card text-center p-4">
-                                <i class="fa-solid fa-arrows-rotate fa-2x mb-2" style="color: var(--escazu-verde);"></i>
-                                <h6>[[#{plantilla.movimientos}]]</h6>
-                            </div>
-                        </a>
+
+                    <div class="col-md-4">
+                        <div class="card p-3">
+                            <h6>[[#{dashboard.activos}]]</h6>
+                            <h4 th:text="${metricas != null ? metricas.activos : 0}"></h4>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <a th:href="@{/categoria/listado}" class="text-decoration-none">
-                            <div class="card text-center p-4">
-                                <i class="fa-solid fa-tags fa-2x mb-2" style="color: var(--escazu-morado);"></i>
-                                <h6>[[#{plantilla.categorias}]]</h6>
-                            </div>
-                        </a>
+
+                    <div class="col-md-4">
+                        <div class="card p-3">
+                            <h6>[[#{dashboard.agotados}]]</h6>
+                            <h4 th:text="${metricas != null ? metricas.agotados : 0}"></h4>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <a th:href="@{/proveedor/listado}" class="text-decoration-none">
-                            <div class="card text-center p-4">
-                                <i class="fa-solid fa-truck fa-2x mb-2" style="color: var(--escazu-naranja);"></i>
-                                <h6>[[#{plantilla.proveedor}]]</h6>
-                            </div>
-                        </a>
-                    </div>
+
                 </div>
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+                        <div class="card p-3">
+                            <h5 class="text-center">[[#{dashboard.nivelesInventario}]]</h5>
+                            <canvas id="stockChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card p-3">
+                            <h5 class="text-center">[[#{dashboard.vencimientos}]]</h5>
+                            <canvas id="vencimientosChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="card p-3">
+                            <h5 class="text-center">[[#{dashboard.movimientos}]]</h5>
+                            <canvas id="movimientosChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card p-3 mt-4">
+                    <h5>[[#{dashboard.itemsPorVencer}]]</h5>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>[[#{tabla.nombre}]]</th>
+                                <th>[[#{tabla.fecha}]]</th>
+                                <th>[[#{tabla.diasRestantes}]]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${itemsPorVencer}">
+                                <td th:text="${item.nombre}"></td>
+                                <td th:text="${item.fechaCaducidad}"></td>
+                                <td th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), item.fechaCaducidad)}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card p-3 mt-4">
+                    <h5>[[#{dashboard.stockBajo}]]</h5>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>[[#{tabla.nombre}]]</th>
+                                <th>[[#{tabla.stock}]]</th>
+                                <th>[[#{tabla.minimo}]]</th>
+                                <th>[[#{tabla.porcentaje}]]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${stockBajo}">
+                                <td th:text="${item.nombre}"></td>
+                                <td th:text="${item.stock}"></td>
+                                <td th:text="${item.stockMinimo}"></td>
+                                <td th:text="${item.stockMinimo > 0 ? (item.stock * 100) / item.stockMinimo : 0} + '%'"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
+
         </div>
 
-        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+            <footer th:replace="~{general/fragmentos :: footer}"></footer>
         </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script th:inline="javascript">
+            document.addEventListener("DOMContentLoaded", function () {
+
+                let stockData = [[${stockData}]] || {};
+                let vencimientosData = [[${vencimientosData}]] || {};
+                let movimientosData = [[${movimientosData}]] || {};
+
+                new Chart(document.getElementById('stockChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(stockData),
+                        datasets: [{
+                                label: 'Stock',
+                                data: Object.values(stockData)
+                            }]
+                    }
+                });
+
+                // 🥧 VENCIMIENTOS
+                new Chart(document.getElementById('vencimientosChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(vencimientosData),
+                        datasets: [{
+                                data: Object.values(vencimientosData)
+                            }]
+                    }
+                });
+
+                // 📈 MOVIMIENTOS
+                new Chart(document.getElementById('movimientosChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(movimientosData),
+                        datasets: [{
+                                label: 'Movimientos',
+                                data: Object.values(movimientosData)
+                            }]
+                    }
+                });
+
+            });
+
+            setInterval(() => {
+                location.reload();
+            }, 60000);
+        </script>
+
     </body>
-
 </html>
