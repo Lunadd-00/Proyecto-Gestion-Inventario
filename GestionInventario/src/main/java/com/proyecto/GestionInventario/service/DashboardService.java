@@ -9,22 +9,22 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- *
- * @author lunad
- */
 @Service
 public class DashboardService {
 
-    @Autowired
-    private ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
+    private final MovimientoRepository movimientoRepository;
 
-    @Autowired
-    private MovimientoRepository movimientoRepository;
+    public DashboardService(ItemRepository itemRepository,
+            MovimientoRepository movimientoRepository) {
+        this.itemRepository = itemRepository;
+        this.movimientoRepository = movimientoRepository;
+    }
 
+    @Transactional(readOnly = true)
     public Map<String, Integer> obtenerStockPorProducto() {
         List<Item> items = itemRepository.findAll();
 
@@ -37,6 +37,7 @@ public class DashboardService {
         return data;
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Integer> obtenerEstadoVencimientos() {
         List<Item> items = itemRepository.findAll();
 
@@ -68,6 +69,7 @@ public class DashboardService {
         return data;
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Integer> obtenerMovimientos() {
         List<Movimiento> movimientos = movimientoRepository.findAll();
 
@@ -89,6 +91,7 @@ public class DashboardService {
         return data;
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Object> obtenerMetricas() {
 
         List<Item> items = itemRepository.findAll();
@@ -138,6 +141,7 @@ public class DashboardService {
         return data;
     }
 
+    @Transactional(readOnly = true)
     public List<Item> obtenerItemsPorVencer() {
         List<Item> items = itemRepository.findAll();
         LocalDate hoy = LocalDate.now();
@@ -151,6 +155,7 @@ public class DashboardService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<Item> obtenerStockBajo() {
         return itemRepository.findAll().stream()
                 .filter(i -> i.getStock() <= i.getStockMinimo())

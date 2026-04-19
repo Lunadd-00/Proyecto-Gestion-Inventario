@@ -38,8 +38,11 @@ public class SecurityConfig {
             for (Ruta ruta : rutas) {
 
                 if (ruta.isRequiereRol() && ruta.getRol() != null) {
-                    requests.requestMatchers(ruta.getRuta())
-                            .hasRole(ruta.getRol().name());
+                    if (ruta.getRol().name().equals("ADMIN")) {
+                        requests.requestMatchers(ruta.getRuta()).hasRole("ADMIN");
+                    } else {
+                        requests.requestMatchers(ruta.getRuta()).hasAnyRole("ADMIN", ruta.getRol().name());
+                    }
                 } else {
                     requests.requestMatchers(ruta.getRuta())
                             .permitAll();
