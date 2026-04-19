@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head}"/>
+    <body>
+        <nav th:replace="~{general/fragmentos :: sidebar}"/>
+        <header th:replace="~{general/fragmentos :: barra-superior}"/>
+
+        <div class="contenedor-pagina">
+        <div class="contenido-principal p-4">
+
+            <h3 class="mb-4"><i class="fa-solid fa-file-chart-column"></i> [[#{reporte.titulo}]]</h3>
+
+            <!-- Inventario General -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-boxes-stacked"></i> [[#{reporte.inventarioGeneral}]]</h5>
+                </div>
+                <div class="card-body d-flex gap-2">
+                    <a th:href="@{/reporte/pdf/inventario}" class="btn btn-danger">
+                        <i class="fa-solid fa-file-pdf"></i> [[#{reporte.generarPDF}]]
+                    </a>
+                    <a th:href="@{/reporte/excel/inventario}" class="btn btn-success">
+                        <i class="fa-solid fa-file-excel"></i> [[#{reporte.generarExcel}]]
+                    </a>
+                </div>
+            </div>
+
+            <!-- Movimientos por período -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-arrows-rotate"></i> [[#{reporte.movimientos}]]</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2 align-items-end mb-3">
+                        <div class="col-md-3">
+                            <label>[[#{reporte.fechaInicio}]]</label>
+                            <input type="date" id="movInicio" class="form-control" th:value="${hoy}"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label>[[#{reporte.fechaFin}]]</label>
+                            <input type="date" id="movFin" class="form-control" th:value="${hoy}"/>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button onclick="descargar('/reporte/pdf/movimientos', 'movInicio', 'movFin')" class="btn btn-danger">
+                            <i class="fa-solid fa-file-pdf"></i> [[#{reporte.generarPDF}]]
+                        </button>
+                        <button onclick="descargar('/reporte/excel/movimientos', 'movInicio', 'movFin')" class="btn btn-success">
+                            <i class="fa-solid fa-file-excel"></i> [[#{reporte.generarExcel}]]
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Por vencer -->
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-clock"></i> [[#{reporte.porVencer}]]</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2 align-items-end mb-3">
+                        <div class="col-md-3">
+                            <label>[[#{reporte.periodo}]]</label>
+                            <select id="diasVencer" class="form-select">
+                                <option value="30">30 días</option>
+                                <option value="60">60 días</option>
+                                <option value="90">90 días</option>
+                            </select>
+                        </div>
+                    </div>
+                    <a id="btnPorVencerPdf" th:href="@{/reporte/pdf/por-vencer(dias=30)}" class="btn btn-danger">
+                        <i class="fa-solid fa-file-pdf"></i> [[#{reporte.generarPDF}]]
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stock bajo -->
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-triangle-exclamation"></i> [[#{reporte.stockBajo}]]</h5>
+                </div>
+                <div class="card-body d-flex gap-2">
+                    <a th:href="@{/reporte/pdf/stock-bajo}" class="btn btn-danger">
+                        <i class="fa-solid fa-file-pdf"></i> [[#{reporte.generarPDF}]]
+                    </a>
+                </div>
+            </div>
+
+            <!-- Reporte completo Excel -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-file-excel"></i> [[#{reporte.completo}]]</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">Incluye hojas: Inventario, Movimientos (90 días), Por Vencer (60 días), Stock Bajo, Resumen.</p>
+                    <a th:href="@{/reporte/excel/completo}" class="btn btn-success">
+                        <i class="fa-solid fa-file-excel"></i> [[#{reporte.generarExcel}]]
+                    </a>
+                </div>
+            </div>
+
+        </div>
+        <footer th:replace="~{general/fragmentos :: footer}"/>
+        </div>
+
+        <script>
+            function descargar(base, idInicio, idFin) {
+                var inicio = document.getElementById(idInicio).value;
+                var fin = document.getElementById(idFin).value;
+                if (!inicio || !fin) { alert('Seleccione fechas de inicio y fin.'); return; }
+                window.location.href = base + '?inicio=' + inicio + '&fin=' + fin;
+            }
+            document.getElementById('diasVencer').addEventListener('change', function() {
+                document.getElementById('btnPorVencerPdf').href = '/reporte/pdf/por-vencer?dias=' + this.value;
+            });
+        </script>
+    </body>
+</html>

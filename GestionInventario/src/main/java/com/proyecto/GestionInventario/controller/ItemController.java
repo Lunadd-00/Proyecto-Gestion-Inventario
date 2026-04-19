@@ -1,6 +1,7 @@
 package com.proyecto.GestionInventario.controller;
 
 import com.proyecto.GestionInventario.domain.Item;
+import com.proyecto.GestionInventario.service.BodegaService;
 import com.proyecto.GestionInventario.service.CategoriaService;
 import com.proyecto.GestionInventario.service.ItemService;
 import com.proyecto.GestionInventario.service.ProveedorService;
@@ -21,21 +22,25 @@ public class ItemController {
     private final ItemService itemService;
     private final CategoriaService categoriaService;
     private final ProveedorService proveedorService;
+    private final BodegaService bodegaService;
     private final MessageSource messageSource;
 
     public ItemController(ItemService itemService,
                           CategoriaService categoriaService,
                           ProveedorService proveedorService,
+                          BodegaService bodegaService,
                           MessageSource messageSource) {
         this.itemService = itemService;
         this.categoriaService = categoriaService;
         this.proveedorService = proveedorService;
+        this.bodegaService = bodegaService;
         this.messageSource = messageSource;
     }
 
     private void cargarListas(Model model) {
         model.addAttribute("categorias", categoriaService.getCategorias());
         model.addAttribute("proveedores", proveedorService.getProveedores());
+        model.addAttribute("bodegas", bodegaService.getBodegas());
     }
 
     @GetMapping("/listado")
@@ -78,6 +83,17 @@ public class ItemController {
             cargarListas(model);
             model.addAttribute("itemNuevo", item);
             return "/item/listado";
+        }
+
+        // Stock y bodega no vienen del formulario: se gestionan vía lotes/movimientos
+        if (item.getId() != null) {
+            itemService.getItem(item.getId()).ifPresent(existing -> {
+                item.setStock(existing.getStock());
+                item.setBodega(existing.getBodega());
+            });
+        } else {
+            item.setStock(0);
+            item.setBodega(null);
         }
 
         itemService.save(item);

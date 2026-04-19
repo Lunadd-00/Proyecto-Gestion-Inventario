@@ -31,9 +31,7 @@ public class Item implements Serializable {
     private String unidadMedida;
 
     @Column(nullable = false)
-    @NotNull(message = "El stock no puede estar vacío.")
-    @Min(value = 0, message = "El stock debe ser mayor o igual a 0.")
-    private Integer stock;
+    private Integer stock = 0;
 
     @Column(name = "stock_minimo", nullable = false)
     @NotNull(message = "El stock mínimo no puede estar vacío.")
@@ -61,6 +59,10 @@ public class Item implements Serializable {
     @JoinColumn(name = "proveedor_id")
     @NotNull(message = "Debe seleccionar un proveedor.")
     private Proveedor proveedor;
+
+    @ManyToOne
+    @JoinColumn(name = "bodega_id")
+    private Bodega bodega;
 
     @PrePersist
     public void prePersist() {

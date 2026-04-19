@@ -1,10 +1,16 @@
 package com.proyecto.GestionInventario.service;
 
+import com.proyecto.GestionInventario.domain.Bodega;
 import com.proyecto.GestionInventario.domain.Item;
+import com.proyecto.GestionInventario.domain.Lote;
 import com.proyecto.GestionInventario.domain.Movimiento;
 import com.proyecto.GestionInventario.domain.TipoMovimiento;
+import com.proyecto.GestionInventario.domain.Usuario;
+import com.proyecto.GestionInventario.repository.BodegaRepository;
 import com.proyecto.GestionInventario.repository.ItemRepository;
+import com.proyecto.GestionInventario.repository.LoteRepository;
 import com.proyecto.GestionInventario.repository.MovimientoRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -15,11 +21,17 @@ public class MovimientoService {
 
     private final MovimientoRepository movimientoRepository;
     private final ItemRepository itemRepository;
+    private final LoteRepository loteRepository;
+    private final BodegaRepository bodegaRepository;
 
     public MovimientoService(MovimientoRepository movimientoRepository,
-                              ItemRepository itemRepository) {
+                              ItemRepository itemRepository,
+                              LoteRepository loteRepository,
+                              BodegaRepository bodegaRepository) {
         this.movimientoRepository = movimientoRepository;
         this.itemRepository = itemRepository;
+        this.loteRepository = loteRepository;
+        this.bodegaRepository = bodegaRepository;
     }
 
     @Transactional(readOnly = true)
@@ -37,94 +49,154 @@ public class MovimientoService {
         return movimientoRepository.findById(id);
     }
 
-    @Transactional
-    public void registrarEntrada(Movimiento movimiento) {
-        movimiento.setTipo(TipoMovimiento.ENTRADA);
-        
-        Item item = movimiento.getItem();
-        if (item == null || item.getId() == null) {
-            throw new IllegalArgumentException("Debe seleccionar un ítem válido.");
-        }
-        
-        Item itemActual = itemRepository.findById(item.getId())
-                .orElseThrow(() -> new IllegalArgumentException("El ítem no existe."));
-        
-        int nuevoStock = itemActual.getStock() + movimiento.getCantidad();
-        itemActual.setStock(nuevoStock);
-        
-        if (!itemActual.isActivo() && nuevoStock > 0) {
-            itemActual.setActivo(true);
-        }
-        
-        itemRepository.save(itemActual);
-        
-        movimiento.setItem(itemActual);
-        movimientoRepository.save(movimiento);
-    }
-
-    @Transactional
-    public void registrarSalida(Movimiento movimiento) {
-        movimiento.setTipo(TipoMovimiento.SALIDA);
-        
-        Item item = movimiento.getItem();
-        if (item == null || item.getId() == null) {
-            throw new IllegalArgumentException("Debe seleccionar un ítem válido.");
-        }
-        
-        Item itemActual = itemRepository.findById(item.getId())
-                .orElseThrow(() -> new IllegalArgumentException("El ítem no existe."));
-        
-        if (movimiento.getCantidad() > itemActual.getStock()) {
-            throw new IllegalStateException(
-                    "No hay stock suficiente. Stock disponible: " + itemActual.getStock());
-        }
-        
-        int nuevoStock = itemActual.getStock() - movimiento.getCantidad();
-        itemActual.setStock(nuevoStock);
-        
-        if (nuevoStock == 0) {
-            itemActual.setActivo(false);
-        }
-        
-        itemRepository.save(itemActual);
-        
-        movimiento.setItem(itemActual);
-        movimientoRepository.save(movimiento);
-    }
-
-    @Transactional
-    public void registrarTransferencia(Movimiento movimiento) {
-        movimiento.setTipo(TipoMovimiento.TRANSFERENCIA);
-
-        Item item = movimiento.getItem();
-        if (item == null || item.getId() == null) {
-            throw new IllegalArgumentException("Debe seleccionar un ítem válido.");
-        }
-
-        Item itemActual = itemRepository.findById(item.getId())
-                .orElseThrow(() -> new IllegalArgumentException("El ítem no existe."));
-
-        if (movimiento.getCantidad() > itemActual.getStock()) {
-            throw new IllegalStateException(
-                    "No hay stock suficiente. Stock disponible: " + itemActual.getStock());
-        }
-
-        if (movimiento.getBodegaOrigen() == null || movimiento.getBodegaOrigen().getId() == null) {
-            throw new IllegalArgumentException("Debe seleccionar la bodega de origen.");
-        }
-        if (movimiento.getBodegaDestino() == null || movimiento.getBodegaDestino().getId() == null) {
-            throw new IllegalArgumentException("Debe seleccionar la bodega de destino.");
-        }
-        if (movimiento.getBodegaOrigen().getId().equals(movimiento.getBodegaDestino().getId())) {
-            throw new IllegalArgumentException("La bodega de origen y destino deben ser diferentes.");
-        }
-
-        movimiento.setItem(itemActual);
-        movimientoRepository.save(movimiento);
-    }
-
     @Transactional(readOnly = true)
     public List<Movimiento> getMovimientosPorItem(Long itemId) {
         return movimientoRepository.findByItemIdOrderByFechaDesc(itemId);
+    }
+
+    /**
+     * ENTRADA: registra un lote nuevo y suma al stock del ítem.
+     */
+    @Transactional
+    public void registrarEntrada(Long itemId, Long bodegaId, Integer cantidad,
+                                  String numeroLote, LocalDate fechaCaducidad,
+                                  String motivo, String observaciones, Usuario usuario) {
+        if (cantidad == null || cantidad < 1) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a 0.");
+        }
+
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("El ítem no existe."));
+        Bodega bodega = bodegaRepository.findById(bodegaId)
+                .orElseThrow(() -> new IllegalArgumentException("La bodega no existe."));
+
+        Lote lote = new Lote();
+        lote.setItem(item);
+        lote.setBodega(bodega);
+        lote.setCantidad(cantidad);
+        lote.setNumeroLote((numeroLote != null && !numeroLote.isBlank()) ? numeroLote.trim() : null);
+        lote.setFechaCaducidad(fechaCaducidad);
+        lote.setActivo(true);
+        loteRepository.save(lote);
+
+        item.setStock(item.getStock() + cantidad);
+        if (!item.isActivo()) item.setActivo(true);
+        itemRepository.save(item);
+
+        Movimiento mov = new Movimiento();
+        mov.setItem(item);
+        mov.setUsuario(usuario);
+        mov.setTipo(TipoMovimiento.ENTRADA);
+        mov.setCantidad(cantidad);
+        mov.setBodegaDestino(bodega);
+        mov.setMotivo(motivo);
+        mov.setObservaciones(observaciones);
+        movimientoRepository.save(mov);
+    }
+
+    /**
+     * SALIDA: descuenta del lote elegido y del stock global del ítem.
+     */
+    @Transactional
+    public void registrarSalida(Long loteId, Integer cantidad,
+                                 String motivo, String observaciones, Usuario usuario) {
+        if (cantidad == null || cantidad < 1) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a 0.");
+        }
+
+        Lote lote = loteRepository.findById(loteId)
+                .orElseThrow(() -> new IllegalArgumentException("El lote no existe."));
+
+        if (cantidad > lote.getCantidad()) {
+            throw new IllegalStateException(
+                    "Stock insuficiente en el lote. Disponible: " + lote.getCantidad());
+        }
+
+        Item item = lote.getItem();
+        Bodega bodega = lote.getBodega();
+
+        lote.setCantidad(lote.getCantidad() - cantidad);
+        if (lote.getCantidad() == 0) lote.setActivo(false);
+        loteRepository.save(lote);
+
+        int nuevoStock = Math.max(0, item.getStock() - cantidad);
+        item.setStock(nuevoStock);
+        if (nuevoStock == 0) item.setActivo(false);
+        itemRepository.save(item);
+
+        Movimiento mov = new Movimiento();
+        mov.setItem(item);
+        mov.setUsuario(usuario);
+        mov.setTipo(TipoMovimiento.SALIDA);
+        mov.setCantidad(cantidad);
+        mov.setBodegaOrigen(bodega);
+        mov.setMotivo(motivo);
+        mov.setObservaciones(observaciones);
+        movimientoRepository.save(mov);
+    }
+
+    /**
+     * TRANSFERENCIA: mueve un lote (entero si tiene caducidad, parcial si no) entre bodegas.
+     * El stock global del ítem no cambia.
+     */
+    @Transactional
+    public void registrarTransferencia(Long loteId, Long bodegaDestinoId,
+                                        Integer cantidadSolicitada, String observaciones,
+                                        Usuario usuario) {
+        Lote loteOrigen = loteRepository.findById(loteId)
+                .orElseThrow(() -> new IllegalArgumentException("El lote no existe."));
+
+        Bodega bodegaDestino = bodegaRepository.findById(bodegaDestinoId)
+                .orElseThrow(() -> new IllegalArgumentException("La bodega de destino no existe."));
+
+        if (loteOrigen.getBodega().getId().equals(bodegaDestinoId)) {
+            throw new IllegalArgumentException("La bodega de origen y destino deben ser diferentes.");
+        }
+
+        Item item = loteOrigen.getItem();
+        Bodega bodegaOrigen = loteOrigen.getBodega();
+
+        int cantidad;
+        if (item.isTieneCaducidad()) {
+            // Lote completo obligatorio cuando hay fecha de vencimiento
+            cantidad = loteOrigen.getCantidad();
+        } else {
+            if (cantidadSolicitada == null || cantidadSolicitada < 1) {
+                throw new IllegalArgumentException("Debe indicar una cantidad válida.");
+            }
+            cantidad = cantidadSolicitada;
+        }
+
+        if (cantidad > loteOrigen.getCantidad()) {
+            throw new IllegalStateException(
+                    "Stock insuficiente en el lote. Disponible: " + loteOrigen.getCantidad());
+        }
+
+        if (cantidad == loteOrigen.getCantidad()) {
+            // Mover lote entero: sólo cambia bodega
+            loteOrigen.setBodega(bodegaDestino);
+            loteRepository.save(loteOrigen);
+        } else {
+            // Transferencia parcial: reducir origen, crear nuevo lote en destino
+            loteOrigen.setCantidad(loteOrigen.getCantidad() - cantidad);
+            loteRepository.save(loteOrigen);
+
+            Lote loteDestino = new Lote();
+            loteDestino.setItem(item);
+            loteDestino.setBodega(bodegaDestino);
+            loteDestino.setCantidad(cantidad);
+            loteDestino.setActivo(true);
+            loteRepository.save(loteDestino);
+        }
+
+        Movimiento mov = new Movimiento();
+        mov.setItem(item);
+        mov.setUsuario(usuario);
+        mov.setTipo(TipoMovimiento.TRANSFERENCIA);
+        mov.setCantidad(cantidad);
+        mov.setBodegaOrigen(bodegaOrigen);
+        mov.setBodegaDestino(bodegaDestino);
+        mov.setObservaciones(observaciones);
+        movimientoRepository.save(mov);
     }
 }

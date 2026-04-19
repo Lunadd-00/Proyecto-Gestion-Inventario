@@ -24,7 +24,7 @@ public class DashboardController {
         model.addAttribute("movimientosData", dashboardService.obtenerMovimientos());
 
         model.addAttribute("metricas", dashboardService.obtenerMetricas());
-        model.addAttribute("itemsPorVencer", dashboardService.obtenerItemsPorVencer());
+        model.addAttribute("lotesPorVencer", dashboardService.obtenerLotesPorVencer());
         model.addAttribute("stockBajo", dashboardService.obtenerStockBajo());
 
         return "dashboard/index";

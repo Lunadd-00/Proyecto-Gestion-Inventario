@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Data;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Data
 @Entity
@@ -18,6 +20,7 @@ public class Movimiento implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
+    @NotFound(action = NotFoundAction.IGNORE)
     private Item item;
 
     @ManyToOne

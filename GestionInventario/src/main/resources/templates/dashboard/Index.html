@@ -76,15 +76,25 @@
                         <thead>
                             <tr>
                                 <th>[[#{tabla.nombre}]]</th>
+                                <th>[[#{lote.numeroLote}]]</th>
+                                <th>[[#{lote.bodega}]]</th>
+                                <th>[[#{lote.cantidad}]]</th>
                                 <th>[[#{tabla.fecha}]]</th>
                                 <th>[[#{tabla.diasRestantes}]]</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="item : ${itemsPorVencer}">
-                                <td th:text="${item.nombre}"></td>
-                                <td th:text="${item.fechaCaducidad}"></td>
-                                <td th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), item.fechaCaducidad)}"></td>
+                            <tr th:each="lote : ${lotesPorVencer}"
+                                th:classappend="${lote.fechaCaducidad.isBefore(T(java.time.LocalDate).now().plusDays(7))} ? 'table-danger' : 'table-warning'">
+                                <td th:text="${lote.item != null ? lote.item.nombre : '-'}"></td>
+                                <td th:text="${lote.numeroLote != null ? lote.numeroLote : 'Lote #' + lote.id}"></td>
+                                <td th:text="${lote.bodega != null ? lote.bodega.nombre : '-'}"></td>
+                                <td th:text="${lote.cantidad}"></td>
+                                <td th:text="${#temporals.format(lote.fechaCaducidad, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), lote.fechaCaducidad)}"></td>
+                            </tr>
+                            <tr th:if="${lotesPorVencer == null or lotesPorVencer.empty}">
+                                <td colspan="6" class="text-center text-muted">[[#{lista.vacia}]]</td>
                             </tr>
                         </tbody>
                     </table>

@@ -2,83 +2,53 @@
     <div class='row py-4 mb-2 bg-light'>
         <div class='col-md-1'></div>
         <div class='col-md-6 d-flex gap-2'>
-            <button type="button"
-                    class="btn btn-success"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalEntrada">
-                <i class="fa-solid fa-arrow-down"></i>
-                [[#{movimiento.registrarEntrada}]]
+            <button type="button" class="btn btn-success"
+                    data-bs-toggle="modal" data-bs-target="#modalEntrada">
+                <i class="fa-solid fa-arrow-down"></i> [[#{movimiento.registrarEntrada}]]
             </button>
-            
-            <button type="button"
-                    class="btn btn-danger"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalSalida">
-                <i class="fa-solid fa-arrow-up"></i>
-                [[#{movimiento.registrarSalida}]]
+            <button type="button" class="btn btn-danger"
+                    data-bs-toggle="modal" data-bs-target="#modalSalida">
+                <i class="fa-solid fa-arrow-up"></i> [[#{movimiento.registrarSalida}]]
             </button>
-
-            <button type="button"
-                    class="btn btn-warning"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalTransferencia">
-                <i class="fa-solid fa-arrows-rotate"></i>
-                [[#{movimiento.registrarTransferencia}]]
+            <button type="button" class="btn btn-warning text-white"
+                    data-bs-toggle="modal" data-bs-target="#modalTransferencia">
+                <i class="fa-solid fa-arrows-rotate"></i> [[#{movimiento.registrarTransferencia}]]
             </button>
         </div>
     </div>
 </section>
 
 
+<!-- ===== MODAL ENTRADA (crea un lote nuevo) ===== -->
 <section th:fragment="modalEntrada">
-    <div class="modal fade"
-         id="modalEntrada"
-         tabindex="-1"
-         aria-hidden="true">
+    <div class="modal fade" id="modalEntrada" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
                     <h5 class="modal-title">
-                        <i class="fa-solid fa-arrow-down"></i>
-                        [[#{movimiento.registrarEntrada}]]
+                        <i class="fa-solid fa-arrow-down"></i> [[#{movimiento.registrarEntrada}]]
                     </h5>
-                    <button type="button"
-                            class="btn-close btn-close-white"
-                            data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form th:action="@{/movimiento/entrada}"
-                      th:object="${movimientoNuevo}"
-                      method="post"
-                      class="was-validated">
+                <form th:action="@{/movimiento/entrada}" method="post">
                     <div class="modal-body">
-
-                        <div class="mb-3">
-                            <label>[[#{movimiento.item}]] *</label>
-                            <select class="form-select" name="item.id" id="itemEntrada" required
-                                    onchange="actualizarStockEntrada()">
-                                <option value="">-- [[#{movimiento.seleccioneItem}]] --</option>
-                                <option th:each="item : ${items}"
-                                        th:value="${item.id}"
-                                        th:text="${item.nombre + ' (Stock: ' + item.stock + ' ' + item.unidadMedida + ')'}"
-                                        th:data-stock="${item.stock}"
-                                        th:data-unidad="${item.unidadMedida}">
-                                </option>
-                            </select>
-                        </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label>[[#{movimiento.cantidad}]] *</label>
-                                <input type="number" 
-                                       class="form-control" 
-                                       name="cantidad" 
-                                       min="1" 
-                                       required/>
-                                <small class="text-muted">[[#{movimiento.cantidadEntradaAyuda}]]</small>
+                                <label>[[#{movimiento.item}]] *</label>
+                                <select class="form-select" name="itemId" id="itemEntrada" required
+                                        onchange="onEntradaItemChange()">
+                                    <option value="">-- [[#{movimiento.seleccioneItem}]] --</option>
+                                    <option th:each="it : ${items}"
+                                            th:value="${it.id}"
+                                            th:text="${it.nombre}"
+                                            th:data-caducidad="${it.tieneCaducidad}">
+                                    </option>
+                                </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>[[#{movimiento.bodega}]] *</label>
-                                <select class="form-select" name="bodegaDestino.id" required>
+                                <label>[[#{lote.bodega}]] *</label>
+                                <select class="form-select" name="bodegaId" required>
                                     <option value="">-- [[#{movimiento.seleccioneBodega}]] --</option>
                                     <option th:each="bodega : ${bodegas}"
                                             th:value="${bodega.id}"
@@ -88,34 +58,41 @@
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{lote.numeroLote}]]</label>
+                                <input type="text" class="form-control" name="numeroLote"
+                                       placeholder="Ej: LOT-2026-001"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{lote.cantidad}]] *</label>
+                                <input type="number" class="form-control" name="cantidad" min="1" required/>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="divFechaCaducidadEntrada" style="display:none">
+                            <label>[[#{lote.fechaCaducidad}]]</label>
+                            <input type="date" class="form-control" name="fechaCaducidad"/>
+                        </div>
+
                         <div class="mb-3">
                             <label>[[#{movimiento.motivo}]]</label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   name="motivo" 
-                                   maxlength="255"
+                            <input type="text" class="form-control" name="motivo" maxlength="255"
                                    placeholder="Ej: Compra, Donación, Reposición..."/>
                         </div>
 
                         <div class="mb-3">
                             <label>[[#{movimiento.observaciones}]]</label>
-                            <textarea class="form-control" 
-                                      name="observaciones" 
-                                      rows="2"
-                                      maxlength="255"></textarea>
+                            <textarea class="form-control" name="observaciones" rows="2" maxlength="255"></textarea>
                         </div>
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-secondary"
-                                data-bs-dismiss="modal">
-                            <i class="fa-solid fa-xmark"></i>
-                            [[#{accion.cerrar}]]
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
                         </button>
                         <button type="submit" class="btn btn-success">
-                            <i class="fa-solid fa-check"></i>
-                            [[#{movimiento.confirmarEntrada}]]
+                            <i class="fa-solid fa-check"></i> [[#{movimiento.confirmarEntrada}]]
                         </button>
                     </div>
                 </form>
@@ -125,101 +102,88 @@
 </section>
 
 
+<!-- ===== MODAL SALIDA (elige ítem → bodega → lote → cantidad) ===== -->
 <section th:fragment="modalSalida">
-    <div class="modal fade"
-         id="modalSalida"
-         tabindex="-1"
-         aria-hidden="true">
+    <div class="modal fade" id="modalSalida" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title">
-                        <i class="fa-solid fa-arrow-up"></i>
-                        [[#{movimiento.registrarSalida}]]
+                        <i class="fa-solid fa-arrow-up"></i> [[#{movimiento.registrarSalida}]]
                     </h5>
-                    <button type="button"
-                            class="btn-close btn-close-white"
-                            data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form th:action="@{/movimiento/salida}"
-                      th:object="${movimientoNuevo}"
-                      method="post"
-                      class="was-validated">
+                <form th:action="@{/movimiento/salida}" method="post">
                     <div class="modal-body">
 
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{movimiento.item}]] *</label>
+                                <select class="form-select" id="itemSalida" required
+                                        onchange="onSalidaChange()">
+                                    <option value="">-- [[#{movimiento.seleccioneItem}]] --</option>
+                                    <option th:each="it : ${items}"
+                                            th:if="${it.stock > 0}"
+                                            th:value="${it.id}"
+                                            th:text="${it.nombre + ' (Stock: ' + it.stock + ')'}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{movimiento.bodega}]] *</label>
+                                <select class="form-select" id="bodegaSalida" required
+                                        onchange="onSalidaChange()">
+                                    <option value="">-- [[#{movimiento.seleccioneBodega}]] --</option>
+                                    <option th:each="bodega : ${bodegas}"
+                                            th:value="${bodega.id}"
+                                            th:text="${bodega.nombre}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="mb-3">
-                            <label>[[#{movimiento.item}]] *</label>
-                            <select class="form-select" name="item.id" id="itemSalida" required
-                                    onchange="actualizarStockSalida()">
-                                <option value="">-- [[#{movimiento.seleccioneItem}]] --</option>
-                                <option th:each="item : ${items}"
-                                        th:if="${item.stock > 0}"
-                                        th:value="${item.id}"
-                                        th:text="${item.nombre + ' (Stock: ' + item.stock + ' ' + item.unidadMedida + ')'}"
-                                        th:data-stock="${item.stock}"
-                                        th:data-unidad="${item.unidadMedida}">
-                                </option>
+                            <label>[[#{lote.titulo}]] *</label>
+                            <select class="form-select" name="loteId" id="loteSalida" required>
+                                <option value="">-- Seleccione ítem y bodega primero --</option>
                             </select>
-                            <small class="text-muted" id="stockDisponibleSalida"></small>
+                            <small class="text-muted" id="infoMaxSalida"></small>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label>[[#{movimiento.cantidad}]] *</label>
-                                <input type="number" 
-                                       class="form-control" 
-                                       name="cantidad" 
-                                       id="cantidadSalida"
-                                       min="1" 
-                                       required/>
-                                <small class="text-danger" id="errorStockSalida" style="display:none;">
+                                <input type="number" class="form-control" name="cantidad"
+                                       id="cantidadSalida" min="1" required/>
+                                <small class="text-danger" id="errorStockSalida" style="display:none">
                                     [[#{movimiento.errorStockInsuficiente}]]
                                 </small>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>[[#{movimiento.bodega}]]</label>
-                                <select class="form-select" name="bodegaOrigen.id">
-                                    <option value="">-- [[#{movimiento.seleccioneBodega}]] --</option>
-                                    <option th:each="bodega : ${bodegas}"
-                                            th:value="${bodega.id}"
-                                            th:text="${bodega.nombre}">
-                                    </option>
+                                <label>[[#{movimiento.motivo}]] *</label>
+                                <select class="form-select" name="motivo" required>
+                                    <option value="">-- [[#{movimiento.seleccioneMotivo}]] --</option>
+                                    <option value="Emergencia">[[#{movimiento.motivo.emergencia}]]</option>
+                                    <option value="Actividad">[[#{movimiento.motivo.actividad}]]</option>
+                                    <option value="Simulacro">[[#{movimiento.motivo.simulacro}]]</option>
+                                    <option value="Mantenimiento">[[#{movimiento.motivo.mantenimiento}]]</option>
+                                    <option value="Otro">[[#{movimiento.motivo.otro}]]</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label>[[#{movimiento.motivo}]] *</label>
-                            <select class="form-select" name="motivo" required>
-                                <option value="">-- [[#{movimiento.seleccioneMotivo}]] --</option>
-                                <option value="Emergencia">[[#{movimiento.motivo.emergencia}]]</option>
-                                <option value="Actividad">[[#{movimiento.motivo.actividad}]]</option>
-                                <option value="Simulacro">[[#{movimiento.motivo.simulacro}]]</option>
-                                <option value="Mantenimiento">[[#{movimiento.motivo.mantenimiento}]]</option>
-                                <option value="Otro">[[#{movimiento.motivo.otro}]]</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
                             <label>[[#{movimiento.observaciones}]]</label>
-                            <textarea class="form-control" 
-                                      name="observaciones" 
-                                      rows="2"
-                                      maxlength="255"
-                                      placeholder="Detalles adicionales sobre el uso del insumo..."></textarea>
+                            <textarea class="form-control" name="observaciones" rows="2" maxlength="255"></textarea>
                         </div>
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-secondary"
-                                data-bs-dismiss="modal">
-                            <i class="fa-solid fa-xmark"></i>
-                            [[#{accion.cerrar}]]
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
                         </button>
                         <button type="submit" class="btn btn-danger" id="btnConfirmarSalida">
-                            <i class="fa-solid fa-check"></i>
-                            [[#{movimiento.confirmarSalida}]]
+                            <i class="fa-solid fa-check"></i> [[#{movimiento.confirmarSalida}]]
                         </button>
                     </div>
                 </form>
@@ -229,71 +193,39 @@
 </section>
 
 
+<!-- ===== MODAL TRANSFERENCIA ===== -->
+<!-- Con caducidad: mueve lote completo. Sin caducidad: elige cantidad (validada). -->
 <section th:fragment="modalTransferencia">
-    <div class="modal fade"
-         id="modalTransferencia"
-         tabindex="-1"
-         aria-hidden="true">
+    <div class="modal fade" id="modalTransferencia" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-warning text-white">
                     <h5 class="modal-title">
-                        <i class="fa-solid fa-arrows-rotate"></i>
-                        [[#{movimiento.registrarTransferencia}]]
+                        <i class="fa-solid fa-arrows-rotate"></i> [[#{movimiento.registrarTransferencia}]]
                     </h5>
-                    <button type="button"
-                            class="btn-close btn-close-white"
-                            data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <form th:action="@{/movimiento/transferencia}"
-                      th:object="${movimientoNuevo}"
-                      method="post"
-                      class="was-validated">
+                <form th:action="@{/movimiento/transferencia}" method="post">
                     <div class="modal-body">
-
-                        <div class="mb-3">
-                            <label>[[#{movimiento.item}]] *</label>
-                            <select class="form-select" name="item.id" id="itemTransferencia" required
-                                    onchange="actualizarStockTransferencia()">
-                                <option value="">-- [[#{movimiento.seleccioneItem}]] --</option>
-                                <option th:each="item : ${items}"
-                                        th:if="${item.stock > 0}"
-                                        th:value="${item.id}"
-                                        th:text="${item.nombre + ' (Stock: ' + item.stock + ' ' + item.unidadMedida + ')'}"
-                                        th:data-stock="${item.stock}"
-                                        th:data-unidad="${item.unidadMedida}">
-                                </option>
-                            </select>
-                            <small class="text-muted" id="stockDisponibleTransferencia"></small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label>[[#{movimiento.cantidad}]] *</label>
-                            <input type="number" 
-                                   class="form-control" 
-                                   name="cantidad" 
-                                   id="cantidadTransferencia"
-                                   min="1" 
-                                   required/>
-                            <small class="text-danger" id="errorStockTransferencia" style="display:none;">
-                                [[#{movimiento.errorStockInsuficiente}]]
-                            </small>
-                        </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label>[[#{movimiento.bodegaOrigen}]] *</label>
-                                <select class="form-select" name="bodegaOrigen.id" id="bodegaOrigenTransferencia" required>
-                                    <option value="">-- [[#{movimiento.seleccioneBodega}]] --</option>
-                                    <option th:each="bodega : ${bodegas}"
-                                            th:value="${bodega.id}"
-                                            th:text="${bodega.nombre}">
+                                <label>[[#{movimiento.item}]] *</label>
+                                <select class="form-select" id="itemTransferencia" required
+                                        onchange="onTransferenciaChange()">
+                                    <option value="">-- [[#{movimiento.seleccioneItem}]] --</option>
+                                    <option th:each="it : ${items}"
+                                            th:if="${it.stock > 0}"
+                                            th:value="${it.id}"
+                                            th:text="${it.nombre + ' (Stock: ' + it.stock + ')'}"
+                                            th:data-caducidad="${it.tieneCaducidad}">
                                     </option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>[[#{movimiento.bodegaDestino}]] *</label>
-                                <select class="form-select" name="bodegaDestino.id" id="bodegaDestinoTransferencia" required>
+                                <label>[[#{movimiento.bodegaOrigen}]] *</label>
+                                <select class="form-select" id="bodegaOrigenTransferencia" required
+                                        onchange="onTransferenciaChange()">
                                     <option value="">-- [[#{movimiento.seleccioneBodega}]] --</option>
                                     <option th:each="bodega : ${bodegas}"
                                             th:value="${bodega.id}"
@@ -301,27 +233,55 @@
                                     </option>
                                 </select>
                             </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>[[#{lote.titulo}]] *</label>
+                            <select class="form-select" name="loteId" id="loteTransferencia" required
+                                    onchange="onLoteTransferenciaChange()">
+                                <option value="">-- Seleccione ítem y bodega origen primero --</option>
+                            </select>
+                        </div>
+
+                        <!-- Solo visible si el ítem NO tiene caducidad -->
+                        <div class="row mb-3" id="cantidadTransferenciaRow" style="display:none">
+                            <div class="col-md-6">
+                                <label>[[#{movimiento.cantidad}]] *</label>
+                                <input type="number" class="form-control" name="cantidad"
+                                       id="cantidadTransferencia" min="1"/>
+                                <small class="text-muted" id="infoMaxTransferencia"></small>
+                            </div>
+                        </div>
+
+                        <!-- Aviso cuando el lote se moverá completo por tener caducidad -->
+                        <div class="alert alert-info py-2" id="infoLoteCompletoTransferencia" style="display:none">
+                            <i class="fa-solid fa-circle-info me-1"></i>
+                            <span id="textoLoteCompleto"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>[[#{movimiento.bodegaDestino}]] *</label>
+                            <select class="form-select" name="bodegaDestinoId" required>
+                                <option value="">-- [[#{movimiento.seleccioneBodega}]] --</option>
+                                <option th:each="bodega : ${bodegas}"
+                                        th:value="${bodega.id}"
+                                        th:text="${bodega.nombre}">
+                                </option>
+                            </select>
                         </div>
 
                         <div class="mb-3">
                             <label>[[#{movimiento.observaciones}]]</label>
-                            <textarea class="form-control" 
-                                      name="observaciones" 
-                                      rows="2"
-                                      maxlength="255"></textarea>
+                            <textarea class="form-control" name="observaciones" rows="2" maxlength="255"></textarea>
                         </div>
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-secondary"
-                                data-bs-dismiss="modal">
-                            <i class="fa-solid fa-xmark"></i>
-                            [[#{accion.cerrar}]]
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
                         </button>
-                        <button type="submit" class="btn btn-warning text-white" id="btnConfirmarTransferencia">
-                            <i class="fa-solid fa-check"></i>
-                            [[#{movimiento.confirmarTransferencia}]]
+                        <button type="submit" class="btn btn-warning text-white">
+                            <i class="fa-solid fa-check"></i> [[#{movimiento.confirmarTransferencia}]]
                         </button>
                     </div>
                 </form>
@@ -340,10 +300,10 @@
                     <label>[[#{movimiento.item}]]</label>
                     <select name="itemId" class="form-select">
                         <option value="">[[#{item.todos}]]</option>
-                        <option th:each="item : ${items}"
-                                th:value="${item.id}"
-                                th:text="${item.nombre}"
-                                th:selected="${item.id != null and item.id.equals(itemIdSeleccionado)}">
+                        <option th:each="it : ${items}"
+                                th:value="${it.id}"
+                                th:text="${it.nombre}"
+                                th:selected="${it.id != null and it.id.equals(itemIdSeleccionado)}">
                         </option>
                     </select>
                 </div>
@@ -352,7 +312,7 @@
                     <select name="tipo" class="form-select">
                         <option value="">[[#{item.todos}]]</option>
                         <option value="ENTRADA" th:selected="${tipoSeleccionado != null and tipoSeleccionado.name() == 'ENTRADA'}">[[#{movimiento.tipo.entrada}]]</option>
-                        <option value="SALIDA" th:selected="${tipoSeleccionado != null and tipoSeleccionado.name() == 'SALIDA'}">[[#{movimiento.tipo.salida}]]</option>
+                        <option value="SALIDA"  th:selected="${tipoSeleccionado != null and tipoSeleccionado.name() == 'SALIDA'}">[[#{movimiento.tipo.salida}]]</option>
                         <option value="TRANSFERENCIA" th:selected="${tipoSeleccionado != null and tipoSeleccionado.name() == 'TRANSFERENCIA'}">[[#{movimiento.tipo.transferencia}]]</option>
                     </select>
                 </div>
@@ -405,17 +365,11 @@
                                             <i class="fa-solid fa-arrows-rotate"></i> [[#{movimiento.tipo.transferencia}]]
                                         </span>
                                     </td>
-                                    <td>[[${mov.item.nombre}]]</td>
+                                    <td th:text="${mov.item != null ? mov.item.nombre : '(eliminado)'}"></td>
                                     <td>
-                                        <span th:if="${mov.tipo.name() == 'ENTRADA'}" class="text-success fw-bold">
-                                            +[[${mov.cantidad}]]
-                                        </span>
-                                        <span th:if="${mov.tipo.name() == 'SALIDA'}" class="text-danger fw-bold">
-                                            -[[${mov.cantidad}]]
-                                        </span>
-                                        <span th:if="${mov.tipo.name() == 'TRANSFERENCIA'}">
-                                            [[${mov.cantidad}]]
-                                        </span>
+                                        <span th:if="${mov.tipo.name() == 'ENTRADA'}" class="text-success fw-bold">+[[${mov.cantidad}]]</span>
+                                        <span th:if="${mov.tipo.name() == 'SALIDA'}"  class="text-danger fw-bold">-[[${mov.cantidad}]]</span>
+                                        <span th:if="${mov.tipo.name() == 'TRANSFERENCIA'}">[[${mov.cantidad}]]</span>
                                     </td>
                                     <td>
                                         <span th:if="${mov.tipo.name() == 'TRANSFERENCIA' and mov.bodegaOrigen != null and mov.bodegaDestino != null}">
@@ -432,8 +386,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="text-center p-2"
-                         th:if="${movimientos == null or movimientos.empty}">
+                    <div class="text-center p-2" th:if="${movimientos == null or movimientos.empty}">
                         <span>[[#{lista.vacia}]]</span>
                     </div>
                 </div>
@@ -444,93 +397,139 @@
 
 
 <th:block th:fragment="scriptMovimiento">
-    <script>
-        var stockActualSalida = 0;
-
-        function actualizarStockEntrada() {
-            var select = document.getElementById('itemEntrada');
-            var selectedOption = select.options[select.selectedIndex];
+<script>
+// ===== HELPER: carga lotes por ítem + bodega vía AJAX =====
+function cargarLotes(itemId, bodegaId, selectId, onLoaded) {
+    var sel = document.getElementById(selectId);
+    sel.innerHTML = '<option value="">-- Cargando... --</option>';
+    if (!itemId || !bodegaId) {
+        sel.innerHTML = '<option value="">-- Seleccione ítem y bodega primero --</option>';
+        return;
+    }
+    $.getJSON('/lote/api/por-bodega', { itemId: itemId, bodegaId: bodegaId }, function(lotes) {
+        if (lotes.length === 0) {
+            sel.innerHTML = '<option value="">Sin lotes en esta bodega</option>';
+        } else {
+            sel.innerHTML = '<option value="">-- Seleccione --</option>';
+            lotes.forEach(function(l) {
+                var label = l.label + ' — Cant: ' + l.cantidad;
+                if (l.fechaCaducidad) label += ' (Vence: ' + l.fechaCaducidad + ')';
+                var opt = document.createElement('option');
+                opt.value = l.id;
+                opt.textContent = label;
+                opt.dataset.cantidad = l.cantidad;
+                sel.appendChild(opt);
+            });
         }
+        if (onLoaded) onLoaded(lotes);
+    }).fail(function() {
+        sel.innerHTML = '<option value="">Error al cargar lotes</option>';
+    });
+}
 
-        function actualizarStockSalida() {
-            var select = document.getElementById('itemSalida');
-            var selectedOption = select.options[select.selectedIndex];
-            var stockInfo = document.getElementById('stockDisponibleSalida');
-            var cantidadInput = document.getElementById('cantidadSalida');
+// ===== ENTRADA: muestra/oculta fecha caducidad según ítem =====
+function onEntradaItemChange() {
+    var sel = document.getElementById('itemEntrada');
+    var opt = sel.options[sel.selectedIndex];
+    var tieneCaducidad = opt && opt.dataset.caducidad === 'true';
+    document.getElementById('divFechaCaducidadEntrada').style.display = tieneCaducidad ? 'block' : 'none';
+}
 
-            if (selectedOption.value) {
-                stockActualSalida = parseInt(selectedOption.getAttribute('data-stock'));
-                var unidad = selectedOption.getAttribute('data-unidad');
-                stockInfo.textContent = 'Stock disponible: ' + stockActualSalida + ' ' + unidad;
-                cantidadInput.setAttribute('max', stockActualSalida);
+// ===== SALIDA: carga lotes cuando cambia ítem o bodega =====
+function onSalidaChange() {
+    var itemId  = document.getElementById('itemSalida').value;
+    var bodegaId = document.getElementById('bodegaSalida').value;
+    cargarLotes(itemId, bodegaId, 'loteSalida', null);
+    document.getElementById('infoMaxSalida').textContent = '';
+    var cant = document.getElementById('cantidadSalida');
+    cant.removeAttribute('max');
+    cant.value = '';
+    document.getElementById('errorStockSalida').style.display = 'none';
+    document.getElementById('btnConfirmarSalida').disabled = false;
+}
+
+// ===== TRANSFERENCIA: carga lotes cuando cambia ítem o bodega origen =====
+function onTransferenciaChange() {
+    var itemId   = document.getElementById('itemTransferencia').value;
+    var bodegaId = document.getElementById('bodegaOrigenTransferencia').value;
+    cargarLotes(itemId, bodegaId, 'loteTransferencia', null);
+    document.getElementById('cantidadTransferenciaRow').style.display = 'none';
+    document.getElementById('infoLoteCompletoTransferencia').style.display = 'none';
+}
+
+// ===== TRANSFERENCIA: ajusta UI al seleccionar un lote =====
+function onLoteTransferenciaChange() {
+    var itemSel = document.getElementById('itemTransferencia');
+    var itemOpt = itemSel.options[itemSel.selectedIndex];
+    var tieneCaducidad = itemOpt && itemOpt.dataset.caducidad === 'true';
+
+    var loteSel = document.getElementById('loteTransferencia');
+    var loteOpt = loteSel.options[loteSel.selectedIndex];
+    var cantidad = loteOpt ? loteOpt.dataset.cantidad : '';
+
+    var cantRow  = document.getElementById('cantidadTransferenciaRow');
+    var infoDiv  = document.getElementById('infoLoteCompletoTransferencia');
+    var cantInput = document.getElementById('cantidadTransferencia');
+
+    if (!loteOpt || !loteOpt.value) {
+        cantRow.style.display  = 'none';
+        infoDiv.style.display  = 'none';
+        return;
+    }
+
+    if (tieneCaducidad) {
+        // Lote completo obligatorio → mostrar aviso, auto-rellenar cantidad
+        cantRow.style.display  = 'none';
+        cantInput.removeAttribute('required');
+        cantInput.value = cantidad;
+        infoDiv.style.display  = 'block';
+        document.getElementById('textoLoteCompleto').textContent =
+            'Este ítem tiene fecha de vencimiento. Se transferirá el lote completo: ' + cantidad + ' unidades.';
+    } else {
+        // Transferencia parcial permitida
+        cantRow.style.display  = 'block';
+        cantInput.setAttribute('required', 'required');
+        cantInput.max   = cantidad;
+        cantInput.value = '';
+        infoDiv.style.display  = 'none';
+        document.getElementById('infoMaxTransferencia').textContent = 'Máximo disponible en lote: ' + cantidad;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    // Salida: actualiza max al elegir lote
+    var loteSalida = document.getElementById('loteSalida');
+    if (loteSalida) {
+        loteSalida.addEventListener('change', function() {
+            var opt = this.options[this.selectedIndex];
+            var max = opt ? parseInt(opt.dataset.cantidad) || 0 : 0;
+            var cantInput = document.getElementById('cantidadSalida');
+            if (max) {
+                cantInput.max = max;
+                document.getElementById('infoMaxSalida').textContent = 'Disponible en lote: ' + max;
             } else {
-                stockActualSalida = 0;
-                stockInfo.textContent = '';
-                cantidadInput.removeAttribute('max');
+                cantInput.removeAttribute('max');
+                document.getElementById('infoMaxSalida').textContent = '';
             }
-            validarCantidadSalida();
-        }
-
-        function validarCantidadSalida() {
-            var cantidadInput = document.getElementById('cantidadSalida');
-            var errorSpan = document.getElementById('errorStockSalida');
-            var btnConfirmar = document.getElementById('btnConfirmarSalida');
-            var cantidad = parseInt(cantidadInput.value) || 0;
-
-            if (stockActualSalida > 0 && cantidad > stockActualSalida) {
-                errorSpan.style.display = 'block';
-                btnConfirmar.disabled = true;
-            } else {
-                errorSpan.style.display = 'none';
-                btnConfirmar.disabled = false;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var cantidadSalida = document.getElementById('cantidadSalida');
-            if (cantidadSalida) {
-                cantidadSalida.addEventListener('input', validarCantidadSalida);
-            }
-            var cantidadTransferencia = document.getElementById('cantidadTransferencia');
-            if (cantidadTransferencia) {
-                cantidadTransferencia.addEventListener('input', validarCantidadTransferencia);
-            }
+            cantInput.value = '';
         });
 
-        var stockActualTransferencia = 0;
-
-        function actualizarStockTransferencia() {
-            var select = document.getElementById('itemTransferencia');
-            var selectedOption = select.options[select.selectedIndex];
-            var stockInfo = document.getElementById('stockDisponibleTransferencia');
-            var cantidadInput = document.getElementById('cantidadTransferencia');
-
-            if (selectedOption.value) {
-                stockActualTransferencia = parseInt(selectedOption.getAttribute('data-stock'));
-                var unidad = selectedOption.getAttribute('data-unidad');
-                stockInfo.textContent = 'Stock disponible: ' + stockActualTransferencia + ' ' + unidad;
-                cantidadInput.setAttribute('max', stockActualTransferencia);
+        // Salida: valida cantidad vs máximo del lote
+        document.getElementById('cantidadSalida').addEventListener('input', function() {
+            var max = parseInt(this.max) || 0;
+            var val = parseInt(this.value) || 0;
+            var err = document.getElementById('errorStockSalida');
+            var btn = document.getElementById('btnConfirmarSalida');
+            if (max > 0 && val > max) {
+                err.style.display = 'block';
+                btn.disabled = true;
             } else {
-                stockActualTransferencia = 0;
-                stockInfo.textContent = '';
-                cantidadInput.removeAttribute('max');
+                err.style.display = 'none';
+                btn.disabled = false;
             }
-            validarCantidadTransferencia();
-        }
-
-        function validarCantidadTransferencia() {
-            var cantidadInput = document.getElementById('cantidadTransferencia');
-            var errorSpan = document.getElementById('errorStockTransferencia');
-            var btnConfirmar = document.getElementById('btnConfirmarTransferencia');
-            var cantidad = parseInt(cantidadInput.value) || 0;
-
-            if (stockActualTransferencia > 0 && cantidad > stockActualTransferencia) {
-                errorSpan.style.display = 'block';
-                btnConfirmar.disabled = true;
-            } else {
-                errorSpan.style.display = 'none';
-                btnConfirmar.disabled = false;
-            }
-        }
-    </script>
+        });
+    }
+});
+</script>
 </th:block>

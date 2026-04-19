@@ -1,8 +1,10 @@
 package com.proyecto.GestionInventario.service;
 
 import com.proyecto.GestionInventario.domain.Item;
+import com.proyecto.GestionInventario.domain.Lote;
 import com.proyecto.GestionInventario.domain.Movimiento;
 import com.proyecto.GestionInventario.repository.ItemRepository;
+import com.proyecto.GestionInventario.repository.LoteRepository;
 import com.proyecto.GestionInventario.repository.MovimientoRepository;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -17,11 +19,14 @@ public class DashboardService {
 
     private final ItemRepository itemRepository;
     private final MovimientoRepository movimientoRepository;
+    private final LoteRepository loteRepository;
 
     public DashboardService(ItemRepository itemRepository,
-            MovimientoRepository movimientoRepository) {
+            MovimientoRepository movimientoRepository,
+            LoteRepository loteRepository) {
         this.itemRepository = itemRepository;
         this.movimientoRepository = movimientoRepository;
+        this.loteRepository = loteRepository;
     }
 
     @Transactional(readOnly = true)
@@ -39,25 +44,23 @@ public class DashboardService {
 
     @Transactional(readOnly = true)
     public Map<String, Integer> obtenerEstadoVencimientos() {
-        List<Item> items = itemRepository.findAll();
+        List<Lote> lotes = loteRepository.findAll().stream()
+                .filter(l -> l.getItem() != null && l.isActivo() && l.getFechaCaducidad() != null)
+                .toList();
 
         int vencidos = 0;
         int porVencer = 0;
         int ok = 0;
-
         LocalDate hoy = LocalDate.now();
 
-        for (Item item : items) {
-            if (item.isTieneCaducidad() && item.getFechaCaducidad() != null) {
-
-                if (item.getFechaCaducidad().isBefore(hoy)) {
-                    vencidos++;
-                } else if (item.getFechaCaducidad().isBefore(hoy.plusDays(7))) {
-                    porVencer++;
-                } else {
-                    ok++;
-                }
-
+        for (Lote lote : lotes) {
+            LocalDate fecha = lote.getFechaCaducidad();
+            if (fecha.isBefore(hoy)) {
+                vencidos++;
+            } else if (fecha.isBefore(hoy.plusDays(7))) {
+                porVencer++;
+            } else {
+                ok++;
             }
         }
 
@@ -101,34 +104,25 @@ public class DashboardService {
         int agotados = 0;
         int stockTotal = 0;
         int stockBajo = 0;
-        int itemsPorVencer = 0;
 
         LocalDate hoy = LocalDate.now();
 
         for (Item item : items) {
-
-            if (item.isActivo()) {
-                activos++;
-            }
-
-            if (item.getStock() == 0) {
-                agotados++;
-            }
-
+            if (item.isActivo())                      activos++;
+            if (item.getStock() == 0)                 agotados++;
             stockTotal += item.getStock();
-
-            if (item.getStock() <= item.getStockMinimo()) {
-                stockBajo++;
-            }
-
-            if (item.isTieneCaducidad() && item.getFechaCaducidad() != null) {
-                long dias = java.time.temporal.ChronoUnit.DAYS.between(hoy, item.getFechaCaducidad());
-
-                if (dias >= 0 && dias <= 30) {
-                    itemsPorVencer++;
-                }
-            }
+            if (item.getStock() <= item.getStockMinimo()) stockBajo++;
         }
+
+        long lotesPorVencer = loteRepository.findAll().stream()
+                .filter(l -> l.getItem() != null && l.isActivo() && l.getFechaCaducidad() != null)
+                .filter(l -> {
+                    long dias = java.time.temporal.ChronoUnit.DAYS.between(hoy, l.getFechaCaducidad());
+                    return dias >= 0 && dias <= 30;
+                })
+                .map(l -> l.getItem().getId())
+                .distinct()
+                .count();
 
         Map<String, Object> data = new HashMap<>();
         data.put("totalItems", totalItems);
@@ -136,22 +130,20 @@ public class DashboardService {
         data.put("agotados", agotados);
         data.put("stockTotal", stockTotal);
         data.put("stockBajo", stockBajo);
-        data.put("itemsPorVencer", itemsPorVencer);
+        data.put("itemsPorVencer", (int) lotesPorVencer);
 
         return data;
     }
 
     @Transactional(readOnly = true)
-    public List<Item> obtenerItemsPorVencer() {
-        List<Item> items = itemRepository.findAll();
+    public List<Lote> obtenerLotesPorVencer() {
         LocalDate hoy = LocalDate.now();
-
-        return items.stream()
-                .filter(i -> i.isTieneCaducidad()
-                && i.getFechaCaducidad() != null
-                && !i.getFechaCaducidad().isBefore(hoy)
-                && i.getFechaCaducidad().isBefore(hoy.plusDays(30)))
-                .sorted((a, b) -> a.getFechaCaducidad().compareTo(b.getFechaCaducidad()))
+        LocalDate limite = hoy.plusDays(30);
+        return loteRepository.findAll().stream()
+                .filter(l -> l.getItem() != null && l.isActivo() && l.getFechaCaducidad() != null
+                        && !l.getFechaCaducidad().isBefore(hoy)
+                        && l.getFechaCaducidad().isBefore(limite))
+                .sorted(java.util.Comparator.comparing(Lote::getFechaCaducidad))
                 .toList();
     }
 

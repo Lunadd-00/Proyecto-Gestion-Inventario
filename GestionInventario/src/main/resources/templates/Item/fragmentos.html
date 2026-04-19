@@ -67,15 +67,11 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label>[[#{item.stock}]] *</label>
-                                <input type="number" class="form-control" name="stock" min="0" required/>
-                            </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label>[[#{item.stockMinimo}]] *</label>
                                 <input type="number" class="form-control" name="stockMinimo" min="0" required/>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label>[[#{item.unidadMedida}]] *</label>
                                 <select class="form-select" name="unidadMedida" required>
                                     <option value="">-- Seleccione --</option>
@@ -202,6 +198,7 @@
                                     <th>[[#{item.stock}]]</th>
                                     <th>[[#{item.stockMinimo}]]</th>
                                     <th>[[#{item.unidadMedida}]]</th>
+                                    <th>[[#{item.bodega}]]</th>
                                     <th>[[#{item.caducidad}]]</th>
                                     <th>[[#{item.activo}]]</th>
                                     <th></th>
@@ -216,21 +213,25 @@
                                     <td>[[${item.stock}]]</td>
                                     <td>[[${item.stockMinimo}]]</td>
                                     <td>[[${item.unidadMedida}]]</td>
+                                    <td th:text="${item.bodega != null ? item.bodega.nombre : '-'}"></td>
                                     <td>
                                         <span th:if="${item.tieneCaducidad}" th:text="${#temporals.format(item.fechaCaducidad, 'dd/MM/yyyy')}"></span>
                                         <span th:unless="${item.tieneCaducidad}">[[#{item.noAplica}]]</span>
                                     </td>
                                     <td th:text="${item.activo} ? 'Sí' : 'No'"></td>
                                     <td>
+                                        <a th:href="@{/lote/listado/}+${item.id}" class="btn btn-info btn-sm">
+                                            <i class="fa-solid fa-layer-group"></i> [[#{lote.verLotes}]]
+                                        </a>
                                         <button type="button"
-                                                class="btn btn-danger"
+                                                class="btn btn-danger btn-sm"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#confirmModalItem"
                                                 th:data-bs-id="${item.id}"
                                                 th:data-bs-nombre="${item.nombre}">
                                             [[#{accion.eliminar}]]
                                         </button>
-                                        <a th:href="@{/item/modificar/}+${item.id}" class="btn btn-warning">
+                                        <a th:href="@{/item/modificar/}+${item.id}" class="btn btn-warning btn-sm">
                                             [[#{accion.actualizar}]]
                                         </a>
                                     </td>
@@ -317,17 +318,12 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label>[[#{item.stock}]] *</label>
-                                <input type="number" class="form-control" th:field="*{stock}" min="0" required/>
-                                <small class="text-danger" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></small>
-                            </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label>[[#{item.stockMinimo}]] *</label>
                                 <input type="number" class="form-control" th:field="*{stockMinimo}" min="0" required/>
                                 <small class="text-danger" th:if="${#fields.hasErrors('stockMinimo')}" th:errors="*{stockMinimo}"></small>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label>[[#{item.unidadMedida}]] *</label>
                                 <select th:field="*{unidadMedida}" class="form-select" required>
                                     <option value="">-- Seleccione --</option>

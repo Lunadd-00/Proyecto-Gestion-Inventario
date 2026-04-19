@@ -1,0 +1,202 @@
+<!-- Cabecera con info del item y botón regresar -->
+<section th:fragment="cabecera">
+    <div class="row py-3 mb-2 bg-light px-3">
+        <div class="col-md-1"></div>
+        <div class="col-md-4">
+            <a th:href="@{/item/listado}" class="btn btn-secondary">
+                <i class="fa-solid fa-arrow-left"></i> [[#{accion.regresar}]]
+            </a>
+        </div>
+        <div class="col-md-6">
+            <h5 class="mb-0 mt-1">
+                <i class="fa-solid fa-layer-group"></i>
+                [[#{lote.titulo}]]: <strong th:text="${item.nombre}"></strong>
+                <span class="badge bg-info ms-2" th:text="'Stock total: ' + ${item.stock}"></span>
+            </h5>
+        </div>
+    </div>
+</section>
+
+<!-- Modal agregar lote -->
+<section th:fragment="agregarLote">
+    <div class="row py-2 mb-2 px-3">
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+            <button type="button" class="btn btn-primary"
+                    data-bs-toggle="modal" data-bs-target="#agregarLoteModal">
+                <i class="fa-solid fa-plus"></i> [[#{lote.agregar}]]
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="agregarLoteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fa-solid fa-layer-group"></i> [[#{lote.agregar}]]
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/lote/guardar}" method="post">
+                    <input type="hidden" name="item.id" th:value="${item.id}"/>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{lote.numeroLote}]]</label>
+                                <input type="text" class="form-control" name="numeroLote"
+                                       placeholder="Ej: LOT-2026-001"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{lote.cantidad}]] *</label>
+                                <input type="number" class="form-control" name="cantidad" min="1" required/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{lote.bodega}]] *</label>
+                                <select class="form-select" name="bodega.id" required>
+                                    <option value="">-- Seleccione --</option>
+                                    <option th:each="b : ${bodegas}"
+                                            th:value="${b.id}"
+                                            th:text="${b.nombre}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{lote.fechaCaducidad}]]</label>
+                                <input type="date" class="form-control" name="fechaCaducidad"/>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> [[#{accion.guardar}]]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tabla de lotes -->
+<section th:fragment="listadoLote" class="p-3">
+    <div class="row p-3 justify-content-center">
+        <div class="col-md-11">
+            <div class="card p-2">
+                <div class="card-header">
+                    <h4>[[#{lote.listado}]]
+                        <span class="fs-6 fw-normal text-muted">
+                            (Total: <span th:text="${totalLotes}"></span>)
+                        </span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div th:if="${lotes != null and !lotes.empty}">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>[[#{lote.numeroLote}]]</th>
+                                    <th>[[#{lote.cantidad}]]</th>
+                                    <th>[[#{lote.bodega}]]</th>
+                                    <th>[[#{lote.fechaIngreso}]]</th>
+                                    <th>[[#{lote.fechaCaducidad}]]</th>
+                                    <th>[[#{item.estado}]]</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="lote : ${lotes}">
+                                    <td th:text="${lote.id}"></td>
+                                    <td th:text="${lote.numeroLote != null ? lote.numeroLote : '-'}"></td>
+                                    <td th:text="${lote.cantidad}"></td>
+                                    <td th:text="${lote.bodega != null ? lote.bodega.nombre : '-'}"></td>
+                                    <td th:text="${#temporals.format(lote.fechaIngreso, 'dd/MM/yyyy')}"></td>
+                                    <td>
+                                        <span th:if="${lote.fechaCaducidad != null}"
+                                              th:text="${#temporals.format(lote.fechaCaducidad, 'dd/MM/yyyy')}"
+                                              th:classappend="${lote.fechaCaducidad.isBefore(#temporals.createNow().toLocalDate())} ? 'text-danger fw-bold' : ''">
+                                        </span>
+                                        <span th:unless="${lote.fechaCaducidad != null}">-</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${lote.activo}" class="badge bg-success">Activo</span>
+                                        <span th:unless="${lote.activo}" class="badge bg-secondary">Inactivo</span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#confirmModalLote"
+                                                th:data-bs-id="${lote.id}"
+                                                th:data-bs-item="${item.id}"
+                                                th:data-bs-nombre="${lote.numeroLote != null ? lote.numeroLote : 'Lote #' + lote.id}">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center p-2" th:if="${lotes == null or lotes.empty}">
+                        <span>[[#{lista.vacia}]]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal confirmar eliminar -->
+<section th:fragment="confirmarEliminarLote">
+    <div class="modal fade" id="confirmModalLote" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form th:action="@{/lote/eliminar}" method="post">
+                    <input type="hidden" name="idLote" id="modalLoteId"/>
+                    <input type="hidden" name="itemId" id="modalLoteItemId"/>
+                    <div class="modal-header bg-warning text-white">
+                        <h5 class="modal-title">
+                            <i class="fa-solid fa-circle-radiation"></i> [[#{accion.confirmar}]]
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>[[#{accion.confirmar.texto1}]] <strong id="modalLoteNombre"></strong>?</p>
+                        <p class="text-warning">[[#{lote.advertencia.eliminar}]]</p>
+                        <h6>[[#{accion.confirmar.texto2}]]</h6>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<th:block th:fragment="scriptLote">
+    <script>
+        var confirmModalLote = document.getElementById('confirmModalLote');
+        if (confirmModalLote) {
+            confirmModalLote.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                document.getElementById('modalLoteId').value = button.getAttribute('data-bs-id');
+                document.getElementById('modalLoteItemId').value = button.getAttribute('data-bs-item');
+                document.getElementById('modalLoteNombre').textContent = button.getAttribute('data-bs-nombre');
+            });
+        }
+    </script>
+</th:block>

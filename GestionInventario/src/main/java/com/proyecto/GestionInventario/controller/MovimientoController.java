@@ -1,14 +1,15 @@
 package com.proyecto.GestionInventario.controller;
 
-import com.proyecto.GestionInventario.domain.Movimiento;
 import com.proyecto.GestionInventario.domain.TipoMovimiento;
 import com.proyecto.GestionInventario.domain.Usuario;
 import com.proyecto.GestionInventario.service.BodegaService;
 import com.proyecto.GestionInventario.service.ItemService;
 import com.proyecto.GestionInventario.service.MovimientoService;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.Locale;
 import org.springframework.context.MessageSource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -53,131 +54,84 @@ public class MovimientoController {
         model.addAttribute("totalMovimientos", movimientos.size());
         model.addAttribute("itemIdSeleccionado", itemIdLong);
         model.addAttribute("tipoSeleccionado", tipoEnum);
-
-        model.addAttribute("movimientoNuevo", new Movimiento());
         cargarListas(model);
 
         return "/movimiento/listado";
     }
 
     @PostMapping("/entrada")
-    public String registrarEntrada(@ModelAttribute("movimientoNuevo") Movimiento movimiento,
-                                    HttpSession session,
-                                    RedirectAttributes redirectAttributes) {
+    public String registrarEntrada(
+            @RequestParam Long itemId,
+            @RequestParam Long bodegaId,
+            @RequestParam Integer cantidad,
+            @RequestParam(required = false) String numeroLote,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaCaducidad,
+            @RequestParam(required = false) String motivo,
+            @RequestParam(required = false) String observaciones,
+            HttpSession session, RedirectAttributes redirectAttributes) {
 
-        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
-        if (usuarioLogueado == null) {
-            return "redirect:/login";
-        }
-
-        if (movimiento.getItem() == null || movimiento.getItem().getId() == null) {
-            redirectAttributes.addFlashAttribute("error", "Debe seleccionar un ítem.");
-            return "redirect:/movimiento/listado";
-        }
-        if (movimiento.getCantidad() == null || movimiento.getCantidad() < 1) {
-            redirectAttributes.addFlashAttribute("error", "La cantidad debe ser mayor a 0.");
-            return "redirect:/movimiento/listado";
-        }
-
-        movimiento.setUsuario(usuarioLogueado);
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuario == null) return "redirect:/login";
 
         try {
-            movimientoService.registrarEntrada(movimiento);
-            redirectAttributes.addFlashAttribute(
-                    "todoOk",
-                    messageSource.getMessage("movimiento.entrada.exitoso", null, Locale.getDefault())
-            );
-        } catch (IllegalArgumentException e) {
+            movimientoService.registrarEntrada(itemId, bodegaId, cantidad,
+                    numeroLote, fechaCaducidad, motivo, observaciones, usuario);
+            redirectAttributes.addFlashAttribute("todoOk",
+                    messageSource.getMessage("movimiento.entrada.exitoso", null, Locale.getDefault()));
+        } catch (IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    messageSource.getMessage("movimiento.error.general", null, Locale.getDefault())
-            );
+            redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("movimiento.error.general", null, Locale.getDefault()));
         }
-
         return "redirect:/movimiento/listado";
     }
 
     @PostMapping("/salida")
-    public String registrarSalida(@ModelAttribute("movimientoNuevo") Movimiento movimiento,
-                                   HttpSession session,
-                                   RedirectAttributes redirectAttributes) {
+    public String registrarSalida(
+            @RequestParam Long loteId,
+            @RequestParam Integer cantidad,
+            @RequestParam(required = false) String motivo,
+            @RequestParam(required = false) String observaciones,
+            HttpSession session, RedirectAttributes redirectAttributes) {
 
-        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
-        if (usuarioLogueado == null) {
-            return "redirect:/login";
-        }
-
-        if (movimiento.getItem() == null || movimiento.getItem().getId() == null) {
-            redirectAttributes.addFlashAttribute("error", "Debe seleccionar un ítem.");
-            return "redirect:/movimiento/listado";
-        }
-        if (movimiento.getCantidad() == null || movimiento.getCantidad() < 1) {
-            redirectAttributes.addFlashAttribute("error", "La cantidad debe ser mayor a 0.");
-            return "redirect:/movimiento/listado";
-        }
-
-        movimiento.setUsuario(usuarioLogueado);
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuario == null) return "redirect:/login";
 
         try {
-            movimientoService.registrarSalida(movimiento);
-            redirectAttributes.addFlashAttribute(
-                    "todoOk",
-                    messageSource.getMessage("movimiento.salida.exitoso", null, Locale.getDefault())
-            );
-        } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-        } catch (IllegalArgumentException e) {
+            movimientoService.registrarSalida(loteId, cantidad, motivo, observaciones, usuario);
+            redirectAttributes.addFlashAttribute("todoOk",
+                    messageSource.getMessage("movimiento.salida.exitoso", null, Locale.getDefault()));
+        } catch (IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    messageSource.getMessage("movimiento.error.general", null, Locale.getDefault())
-            );
+            redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("movimiento.error.general", null, Locale.getDefault()));
         }
-
         return "redirect:/movimiento/listado";
     }
 
     @PostMapping("/transferencia")
-    public String registrarTransferencia(@ModelAttribute("movimientoNuevo") Movimiento movimiento,
-                                          HttpSession session,
-                                          RedirectAttributes redirectAttributes) {
+    public String registrarTransferencia(
+            @RequestParam Long loteId,
+            @RequestParam Long bodegaDestinoId,
+            @RequestParam(required = false) Integer cantidad,
+            @RequestParam(required = false) String observaciones,
+            HttpSession session, RedirectAttributes redirectAttributes) {
 
-        Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
-        if (usuarioLogueado == null) {
-            return "redirect:/login";
-        }
-
-        if (movimiento.getItem() == null || movimiento.getItem().getId() == null) {
-            redirectAttributes.addFlashAttribute("error", "Debe seleccionar un ítem.");
-            return "redirect:/movimiento/listado";
-        }
-        if (movimiento.getCantidad() == null || movimiento.getCantidad() < 1) {
-            redirectAttributes.addFlashAttribute("error", "La cantidad debe ser mayor a 0.");
-            return "redirect:/movimiento/listado";
-        }
-
-        movimiento.setUsuario(usuarioLogueado);
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuario == null) return "redirect:/login";
 
         try {
-            movimientoService.registrarTransferencia(movimiento);
-            redirectAttributes.addFlashAttribute(
-                    "todoOk",
-                    messageSource.getMessage("movimiento.transferencia.exitoso", null, Locale.getDefault())
-            );
-        } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-        } catch (IllegalArgumentException e) {
+            movimientoService.registrarTransferencia(loteId, bodegaDestinoId, cantidad, observaciones, usuario);
+            redirectAttributes.addFlashAttribute("todoOk",
+                    messageSource.getMessage("movimiento.transferencia.exitoso", null, Locale.getDefault()));
+        } catch (IllegalArgumentException | IllegalStateException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    messageSource.getMessage("movimiento.error.general", null, Locale.getDefault())
-            );
+            redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("movimiento.error.general", null, Locale.getDefault()));
         }
-
         return "redirect:/movimiento/listado";
     }
 
@@ -185,11 +139,9 @@ public class MovimientoController {
     public String historialPorItem(@PathVariable Long itemId, Model model) {
         var movimientos = movimientoService.getMovimientosPorItem(itemId);
         var item = itemService.getItem(itemId);
-
         model.addAttribute("movimientos", movimientos);
         model.addAttribute("item", item.orElse(null));
         model.addAttribute("totalMovimientos", movimientos.size());
-
         return "/movimiento/historial";
     }
 }
