@@ -101,6 +101,8 @@ En el avance final se implementaron funcionalidades enfocadas en **visualizació
 |-------------|------------------------------------|
 |  Luna Delgado | **HU-15** – Dashboard con gráficas<br>**HU-16** – Métricas de inventario (total, por vencer, stock bajo)<br>**HU-17** – Reportes PDF (junto con Erick)<br>**HU-18** – Reportes Excel (junto con Erick) |
 |  Erick Chaves | **HU-17** – Reportes PDF<br>**HU-18** – Reportes Excel<br>**HU-20** – Seguridad con Spring Security y respaldo de datos |
+|  Abby Chavarría | **Actualización de las HU-01, HU-02 y HU-03** |
+|  Jimena Barrantes | **Actualización de las HU-10 y HU-09** |
 |  Equipo Completo | **HU-19** – Interfaz responsive y amigable |
 
 ###  Implementaciones Clave
