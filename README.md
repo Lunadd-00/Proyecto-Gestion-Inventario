@@ -93,7 +93,7 @@ Para el primer avance del proyecto se desarrolló aproximadamente el **50% de la
 
 ---
 
-## 🚀 Historias de Usuario Implementadas (Avance Final)
+##  Historias de Usuario Implementadas (Avance Final)
 
 En el avance final se implementaron funcionalidades enfocadas en **visualización de datos, reportes, seguridad y experiencia de usuario**.
 
