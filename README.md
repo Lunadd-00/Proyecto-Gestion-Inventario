@@ -1,50 +1,57 @@
+#  Sistema de Gestión de Inventarios
 
-# Sistema de Gestión de Inventarios
+Sistema web para la **gestión, control y monitoreo de inventarios de insumos de emergencia** desarrollado para el **Departamento de Gestión de Riesgos de la Municipalidad de Escazú**.
 
-Sistema web para la gestión, control y monitoreo de inventarios de insumos de emergencia desarrollado para el Departamento de Gestión de Riesgos de la Municipalidad de Escazú.
+El sistema permite administrar ítems, registrar movimientos de inventario, generar alertas y visualizar métricas que apoyan la toma de decisiones en situaciones de emergencia.
 
-El sistema permite administrar ítems, registrar movimientos de inventario, generar alertas y visualizar métricas que apoyen la toma de decisiones ante situaciones de emergencia.
+---
 
+##  Autores
 
-## Autores
+- Abby Camila Chavarría Bolaños  
+- Luna Delgado Durango  
+- Jimena Barrantes Arguedas  
+- Erick José Chaves Delgado  
 
-- Abby Camila Chavarría Bolaños
-- Luna Delgado Durango
-- Jimena Barrantes Arguedas
-- Erick José Chaves Delgado
-  
+---
 
-## Descripción
+##  Descripción
 
-Actualmente el Departamento de Gestión de Riesgos de la Municipalidad de Escazú administra una gran cantidad de insumos críticos utilizados en la atención de emergencias, tales como:
+Actualmente, el Departamento de Gestión de Riesgos de la Municipalidad de Escazú administra una gran cantidad de insumos críticos utilizados en la atención de emergencias, tales como:
 
-- Equipos de emergencia
-- Suministros médicos
-- Herramientas especializadas
-- Materiales de respuesta rápida
+- Equipos de emergencia  
+- Suministros médicos  
+- Herramientas especializadas  
+- Materiales de respuesta rápida  
 
 El control de estos inventarios se realiza mediante métodos manuales o sistemas poco integrados, lo cual genera problemas como:
 
-- Falta de trazabilidad de insumos
-- Riesgo de vencimiento de productos
-- Dificultad para controlar existencias
-- Limitaciones en la toma de decisiones
+- Falta de trazabilidad de insumos  
+- Riesgo de vencimiento de productos  
+- Dificultad para controlar existencias  
+- Limitaciones en la toma de decisiones  
 
-Para solucionar esto se propone el desarrollo de un Sistema de Gestión de Inventarios que permita automatizar el control, seguimiento y análisis de los insumos.
-## Arquitectura del Sistema
+Para solucionar esto, se propone el desarrollo de un sistema que automatice el control, seguimiento y análisis del inventario.
+
+---
+
+##  Arquitectura del Sistema
 
 El proyecto sigue una arquitectura basada en el patrón:
 
-- MVC (Model - View - Controller)
+**MVC (Model - View - Controller)**
 
-Además se utilizan principios de diseño que facilitan la mantenibilidad del código. Componentes principales:
+### Componentes principales:
 
-- Model: Representación de las entidades del sistema
-- View: Interfaces desarrolladas con Thymeleaf y Bootstrap
-- Controller: Manejo de las peticiones HTTP
-- DAO / Repository: Acceso a datos en MySQL
-- Service: Lógica de negocio
-## Requerimientos del Sistema
+- **Model:** Representación de las entidades del sistema  
+- **View:** Interfaces desarrolladas con Thymeleaf y Bootstrap  
+- **Controller:** Manejo de las peticiones HTTP  
+- **Repository (DAO):** Acceso a datos en MySQL  
+- **Service:** Lógica de negocio  
+
+---
+
+##  Requerimientos del Sistema
 
 ### Requerimientos Funcionales
 
@@ -70,18 +77,45 @@ Además se utilizan principios de diseño que facilitan la mantenibilidad del c�
 | Mantenibilidad | Código estructurado y documentado |
 | Portabilidad | Compatible con navegadores modernos |
 | Respaldo | Backup automático de la base de datos |
-## Historias de Usuario Implementadas (50%)
 
-Para el primer avance del proyecto se desarrolló aproximadamente el 50% de las historias de usuario, abarcando de la primera a la decima.
+---
+
+##  Historias de Usuario Implementadas (Segundo Avance - 50%)
+
+Para el primer avance del proyecto se desarrolló aproximadamente el **50% de las historias de usuario (HU-01 a HU-10)**.
 
 | Integrante | Historias de Usuario Implementadas |
 |-------------|------------------------------------|
-| Abby Chavarría | **HU-01** – Inicio de sesión de administrador **HU-02** – Inicio de sesión de colaborador **HU-03** – Gestión de usuarios (crear, editar, desactivar y asignar roles) |
-| Luna Delgado | **HU-04** – Gestión de categorías (crear, editar, eliminar) **HU-05** – Gestión de proveedores (registro y visualización) |
-| Erick Chaves | **HU-06** – Registro de ítems con o sin fecha de caducidad **HU-07** – Edición de ítems **HU-08** – Visualización y filtrado de inventario |
-| Jimena Barrantes | **HU-09** – Registro de entradas de inventario **HU-10** – Registro de salidas de inventario Validación de stock insuficiente Actualización de stock a cero |
+|  Abby Chavarría | **HU-01** – Inicio de sesión de administrador<br>**HU-02** – Inicio de sesión de colaborador<br>**HU-03** – Gestión de usuarios |
+|  Luna Delgado | **HU-04** – Gestión de categorías<br>**HU-05** – Gestión de proveedores |
+|  Erick Chaves | **HU-06** – Registro de ítems<br>**HU-07** – Edición de ítems<br>**HU-08** – Visualización de inventario |
+|  Jimena Barrantes | **HU-09** – Entradas de inventario<br>**HU-10** – Salidas de inventario<br>Validación de stock insuficiente<br>Actualización de stock |
 
-## Progreso del Proyecto
+---
+
+## 🚀 Historias de Usuario Implementadas (Avance Final)
+
+En el avance final se implementaron funcionalidades enfocadas en **visualización de datos, reportes, seguridad y experiencia de usuario**.
+
+| Integrante | Historias de Usuario Implementadas |
+|-------------|------------------------------------|
+|  Luna Delgado | **HU-15** – Dashboard con gráficas<br>**HU-16** – Métricas de inventario (total, por vencer, stock bajo)<br>**HU-17** – Reportes PDF (junto con Erick)<br>**HU-18** – Reportes Excel (junto con Erick) |
+|  Erick Chaves | **HU-17** – Reportes PDF<br>**HU-18** – Reportes Excel<br>**HU-20** – Seguridad con Spring Security y respaldo de datos |
+|  Equipo Completo | **HU-19** – Interfaz responsive y amigable |
+
+###  Implementaciones Clave
+
+- Dashboard con gráficas dinámicas  
+- Generación de reportes en PDF y Excel  
+- Seguridad con Spring Security (autenticación y autorización)  
+- Cifrado de contraseñas  
+- Envío de notificaciones por correo  
+- Diseño responsive  
+- Respaldo automático de la base de datos  
+
+---
+
+##  Progreso del Proyecto
 
 | Módulo | Estado |
 |------|------|
@@ -89,7 +123,9 @@ Para el primer avance del proyecto se desarrolló aproximadamente el 50% de las 
 | Gestión de Usuarios |  Completado |
 | Categorías |  Completado |
 | Proveedores |  Completado |
-| Inventario |  En desarrollo |
-| Movimientos de inventario |  En desarrollo |
-| Reportes |  Pendiente |
-| Dashboard |  Pendiente |
+| Inventario |  Completado |
+| Movimientos de inventario |  Completado |
+| Reportes |  Completado |
+| Dashboard |  Completado |
+
+---
