@@ -98,10 +98,10 @@ public class AlertaService {
         sb.append("<html><body style='font-family:Arial,sans-serif;'>");
         sb.append("<h2 style='color:#1cb6b8;'>⚠️ Ítems próximos a vencer</h2>");
         sb.append("<p>Los siguientes ítems vencerán en los próximos <strong>30 días</strong>:</p>");
-        sb.append("<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse;width:100%;'>");
-        sb.append("<thead style='background:#f5a623;color:white;'>");
-        sb.append("<tr><th>Ítem</th><th>Categoría</th><th>Stock</th><th>Fecha Vencimiento</th><th>Días Restantes</th></tr>");
-        sb.append("</thead><tbody>");
+        sb.append("<table border='0' cellpadding='8' cellspacing='0' style='border-collapse:collapse;width:100%;'>");
+        sb.append("<thead><tr style='background:#1cb6b8;color:white;'>");
+        sb.append("<th>Ítem</th><th>Categoría</th><th>Stock</th><th>Fecha Vencimiento</th><th>Días Restantes</th>");
+        sb.append("</tr></thead><tbody>");
         for (Item i : items) {
             long dias = java.time.temporal.ChronoUnit.DAYS.between(hoy, i.getFechaCaducidad());
             String color = dias <= 7 ? "#ffd6d6" : "#fff9e6";
