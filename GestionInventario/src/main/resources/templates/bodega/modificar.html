@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+        <nav    th:replace="~{general/fragmentos :: sidebar}"></nav>
+        <header th:replace="~{general/fragmentos :: barra-superior}"></header>
+
+        <div class="contenedor-pagina">
+            <div class="contenido-principal">
+
+                <div class="row py-4 mb-2 bg-light px-3">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-3">
+                        <a th:href="@{/bodega/listado}" class="btn btn-primary">
+                            <i class="fa-solid fa-arrow-left"></i> [[#{accion.regresar}]]
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row p-3 justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header" style="background:#1cb6b8; color:white;">
+                                <h5 class="m-0">
+                                    <i class="fa-solid fa-warehouse me-2"></i>
+                                    [[#{bodega.editar}]]
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/bodega/guardar}"
+                                      th:object="${bodega}"
+                                      method="post"
+                                      class="was-validated">
+                                    <input type="hidden" name="id" th:field="*{id}"/>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">[[#{bodega.nombre}]] *</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{nombre}"
+                                               maxlength="100" required/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">[[#{bodega.ubicacion}]]</label>
+                                        <input type="text" class="form-control"
+                                               th:field="*{ubicacion}"
+                                               maxlength="255"/>
+                                    </div>
+
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <a th:href="@{/bodega/listado}" class="btn btn-secondary">
+                                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                                        </a>
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fa-solid fa-check"></i> [[#{accion.guardar}]]
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <section th:replace="~{general/fragmentos :: mostrarToast}"></section>
+            </div>
+            <footer th:replace="~{general/fragmentos :: footer}"></footer>
+        </div>
+    </body>
+</html>

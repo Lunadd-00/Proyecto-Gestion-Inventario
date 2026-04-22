@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+        <nav    th:replace="~{general/fragmentos :: sidebar}"></nav>
+        <header th:replace="~{general/fragmentos :: barra-superior}"></header>
+
+        <div class="contenedor-pagina">
+            <div class="contenido-principal">
+                <section th:replace="~{bodega/fragmentos :: agregarBodega}"></section>
+                <section th:replace="~{bodega/fragmentos :: listadoBodega}"></section>
+                <section th:replace="~{bodega/fragmentos :: confirmarEliminarBodega}"></section>
+                <section th:replace="~{general/fragmentos :: mostrarToast}"></section>
+            </div>
+            <footer th:replace="~{general/fragmentos :: footer}"></footer>
+        </div>
+    </body>
+</html>

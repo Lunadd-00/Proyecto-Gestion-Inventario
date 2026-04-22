@@ -35,6 +35,8 @@ public class SecurityConfig {
                     "/webjars/**"
             ).permitAll();
 
+            requests.requestMatchers("/bodega/**", "/configuracion-alerta/**").hasRole("ADMIN");
+
             for (Ruta ruta : rutas) {
 
                 if (ruta.isRequiereRol() && ruta.getRol() != null) {
@@ -72,6 +74,10 @@ public class SecurityConfig {
         http.sessionManagement(session -> session
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false)
+        );
+
+        http.headers(headers -> headers
+                .cacheControl(cacheControl -> { })
         );
 
         return http.build();

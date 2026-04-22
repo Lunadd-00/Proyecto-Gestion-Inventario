@@ -56,17 +56,31 @@
                     <span>[[#{plantilla.usuarios}]]</span>
                 </a>
             </li>
-            <li>
-                <a th:href="@{/reporte}">
-                    <i class="fa-solid fa-file-chart-column"></i>
-                    <span>[[#{plantilla.reportes}]]</span>
+            <li sec:authorize="hasRole('ROLE_ADMIN')">
+                <a th:href="@{/bodega/listado}">
+                    <i class="fa-solid fa-warehouse"></i>
+                    <span>[[#{plantilla.bodegas}]]</span>
                 </a>
             </li>
             <li>
-                <a th:href="@{/login}">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>[[#{plantilla.usuariocambiar}]]</span>
+                <a th:href="@{/reporte}">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <span>[[#{plantilla.reportes}]]</span>
                 </a>
+            </li>
+            <li sec:authorize="hasRole('ROLE_ADMIN')">
+                <a th:href="@{/configuracion-alerta}">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>[[#{plantilla.alertas}]]</span>
+                </a>
+            </li>
+            <li>
+                <form th:action="@{/logout}" method="post" style="margin:0; padding:0;">
+                    <button type="submit" class="sidebar-logout-btn">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>[[#{plantilla.cerrarSesion}]]</span>
+                    </button>
+                </form>
             </li>
         </ul>
     </nav>

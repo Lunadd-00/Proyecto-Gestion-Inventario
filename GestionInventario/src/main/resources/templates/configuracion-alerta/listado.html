@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+    <head th:replace="~{general/fragmentos :: head}"></head>
+    <body>
+        <nav    th:replace="~{general/fragmentos :: sidebar}"></nav>
+        <header th:replace="~{general/fragmentos :: barra-superior}"></header>
+
+        <div class="contenedor-pagina">
+            <div class="contenido-principal">
+
+                <div class="row py-4 mb-2 bg-light px-3">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-8">
+                        <h4><i class="fa-solid fa-clock me-2"></i>[[#{alerta.config.titulo}]]</h4>
+                        <p class="text-muted mb-0">[[#{alerta.config.subtitulo}]]</p>
+                    </div>
+                </div>
+
+                <div class="row p-3 justify-content-center">
+                    <div class="col-md-7">
+                        <form th:action="@{/configuracion-alerta/guardar}"
+                              th:object="${config}"
+                              method="post">
+
+                            <!-- ── Alerta de Vencimiento ── -->
+                            <div class="card mb-4">
+                                <div class="card-header d-flex align-items-center gap-2"
+                                     style="background:#1cb6b8; color:white;">
+                                    <i class="fa-solid fa-calendar-xmark fa-lg"></i>
+                                    <span class="fw-semibold">[[#{alerta.config.vencimiento}]]</span>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted small">[[#{alerta.config.vencimiento.desc}]]</p>
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-semibold">[[#{alerta.config.hora}]]</label>
+                                            <input type="number" class="form-control"
+                                                   name="horaVencimiento"
+                                                   th:field="*{horaVencimiento}"
+                                                   min="0" max="23" required/>
+                                            <div class="form-text">0 – 23</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-semibold">[[#{alerta.config.minuto}]]</label>
+                                            <input type="number" class="form-control"
+                                                   name="minutoVencimiento"
+                                                   th:field="*{minutoVencimiento}"
+                                                   min="0" max="59" required/>
+                                            <div class="form-text">0 – 59</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="alert alert-info py-2 mb-0 small">
+                                                <i class="fa-solid fa-circle-info me-1"></i>
+                                                [[#{alerta.config.ejemplo}]]
+                                                <strong th:text="*{horaVencimiento} + ':' + (*{minutoVencimiento} < 10 ? '0' : '') + *{minutoVencimiento}">08:00</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ── Alerta de Stock Mínimo ── -->
+                            <div class="card mb-4">
+                                <div class="card-header d-flex align-items-center gap-2"
+                                     style="background:#f86828; color:white;">
+                                    <i class="fa-solid fa-box-open fa-lg"></i>
+                                    <span class="fw-semibold">[[#{alerta.config.stock}]]</span>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted small">[[#{alerta.config.stock.desc}]]</p>
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-semibold">[[#{alerta.config.hora}]]</label>
+                                            <input type="number" class="form-control"
+                                                   name="horaStock"
+                                                   th:field="*{horaStock}"
+                                                   min="0" max="23" required/>
+                                            <div class="form-text">0 – 23</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-semibold">[[#{alerta.config.minuto}]]</label>
+                                            <input type="number" class="form-control"
+                                                   name="minutoStock"
+                                                   th:field="*{minutoStock}"
+                                                   min="0" max="59" required/>
+                                            <div class="form-text">0 – 59</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="alert alert-info py-2 mb-0 small">
+                                                <i class="fa-solid fa-circle-info me-1"></i>
+                                                [[#{alerta.config.ejemplo}]]
+                                                <strong th:text="*{horaStock} + ':' + (*{minutoStock} < 10 ? '0' : '') + *{minutoStock}">08:05</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="submit" class="btn btn-success px-4">
+                                    <i class="fa-solid fa-floppy-disk me-1"></i> [[#{accion.guardar}]]
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <section th:replace="~{general/fragmentos :: mostrarToast}"></section>
+            </div>
+            <footer th:replace="~{general/fragmentos :: footer}"></footer>
+        </div>
+    </body>
+</html>

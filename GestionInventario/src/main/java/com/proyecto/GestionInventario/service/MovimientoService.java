@@ -54,9 +54,6 @@ public class MovimientoService {
         return movimientoRepository.findByItemIdOrderByFechaDesc(itemId);
     }
 
-    /**
-     * ENTRADA: registra un lote nuevo y suma al stock del ítem.
-     */
     @Transactional
     public void registrarEntrada(Long itemId, Long bodegaId, Integer cantidad,
                                   String numeroLote, LocalDate fechaCaducidad,
@@ -70,11 +67,17 @@ public class MovimientoService {
         Bodega bodega = bodegaRepository.findById(bodegaId)
                 .orElseThrow(() -> new IllegalArgumentException("La bodega no existe."));
 
+        String numLote = (numeroLote != null && !numeroLote.isBlank()) ? numeroLote.trim() : null;
+        if (numLote != null && loteRepository.existsByNumeroLote(numLote)) {
+            throw new IllegalArgumentException(
+                    "El número de lote '" + numLote + "' ya existe. Use un número diferente.");
+        }
+
         Lote lote = new Lote();
         lote.setItem(item);
         lote.setBodega(bodega);
         lote.setCantidad(cantidad);
-        lote.setNumeroLote((numeroLote != null && !numeroLote.isBlank()) ? numeroLote.trim() : null);
+        lote.setNumeroLote(numLote);
         lote.setFechaCaducidad(fechaCaducidad);
         lote.setActivo(true);
         loteRepository.save(lote);
@@ -94,9 +97,6 @@ public class MovimientoService {
         movimientoRepository.save(mov);
     }
 
-    /**
-     * SALIDA: descuenta del lote elegido y del stock global del ítem.
-     */
     @Transactional
     public void registrarSalida(Long loteId, Integer cantidad,
                                  String motivo, String observaciones, Usuario usuario) {
@@ -116,8 +116,11 @@ public class MovimientoService {
         Bodega bodega = lote.getBodega();
 
         lote.setCantidad(lote.getCantidad() - cantidad);
-        if (lote.getCantidad() == 0) lote.setActivo(false);
-        loteRepository.save(lote);
+        if (lote.getCantidad() == 0) {
+            loteRepository.deleteById(lote.getId());
+        } else {
+            loteRepository.save(lote);
+        }
 
         int nuevoStock = Math.max(0, item.getStock() - cantidad);
         item.setStock(nuevoStock);
@@ -135,14 +138,10 @@ public class MovimientoService {
         movimientoRepository.save(mov);
     }
 
-    /**
-     * TRANSFERENCIA: mueve un lote (entero si tiene caducidad, parcial si no) entre bodegas.
-     * El stock global del ítem no cambia.
-     */
     @Transactional
     public void registrarTransferencia(Long loteId, Long bodegaDestinoId,
-                                        Integer cantidadSolicitada, String observaciones,
-                                        Usuario usuario) {
+                                        Integer cantidadSolicitada, String motivo,
+                                        String observaciones, Usuario usuario) {
         Lote loteOrigen = loteRepository.findById(loteId)
                 .orElseThrow(() -> new IllegalArgumentException("El lote no existe."));
 
@@ -157,8 +156,8 @@ public class MovimientoService {
         Bodega bodegaOrigen = loteOrigen.getBodega();
 
         int cantidad;
-        if (item.isTieneCaducidad()) {
-            // Lote completo obligatorio cuando hay fecha de vencimiento
+        if (loteOrigen.getFechaCaducidad() != null) {
+            // Lote con fecha de vencimiento → se transfiere completo
             cantidad = loteOrigen.getCantidad();
         } else {
             if (cantidadSolicitada == null || cantidadSolicitada < 1) {
@@ -196,6 +195,7 @@ public class MovimientoService {
         mov.setCantidad(cantidad);
         mov.setBodegaOrigen(bodegaOrigen);
         mov.setBodegaDestino(bodegaDestino);
+        mov.setMotivo(motivo);
         mov.setObservaciones(observaciones);
         movimientoRepository.save(mov);
     }

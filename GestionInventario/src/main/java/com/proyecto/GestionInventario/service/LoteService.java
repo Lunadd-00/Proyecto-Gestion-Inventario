@@ -56,21 +56,4 @@ public class LoteService {
             itemRepository.save(item);
         }
     }
-
-    @Transactional
-    public void delete(Long id) {
-        Lote lote = loteRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("El lote no existe."));
-
-        Item item = itemRepository.findById(lote.getItem().getId())
-                .orElseThrow(() -> new IllegalArgumentException("El ítem no existe."));
-
-        int nuevoStock = Math.max(0, item.getStock() - lote.getCantidad());
-        item.setStock(nuevoStock);
-        if (nuevoStock == 0) {
-            item.setActivo(false);
-        }
-        itemRepository.save(item);
-        loteRepository.deleteById(id);
-    }
 }

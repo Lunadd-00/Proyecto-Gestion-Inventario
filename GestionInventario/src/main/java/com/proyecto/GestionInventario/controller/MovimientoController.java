@@ -116,6 +116,7 @@ public class MovimientoController {
             @RequestParam Long loteId,
             @RequestParam Long bodegaDestinoId,
             @RequestParam(required = false) Integer cantidad,
+            @RequestParam(required = false) String motivo,
             @RequestParam(required = false) String observaciones,
             HttpSession session, RedirectAttributes redirectAttributes) {
 
@@ -123,7 +124,7 @@ public class MovimientoController {
         if (usuario == null) return "redirect:/login";
 
         try {
-            movimientoService.registrarTransferencia(loteId, bodegaDestinoId, cantidad, observaciones, usuario);
+            movimientoService.registrarTransferencia(loteId, bodegaDestinoId, cantidad, motivo, observaciones, usuario);
             redirectAttributes.addFlashAttribute("todoOk",
                     messageSource.getMessage("movimiento.transferencia.exitoso", null, Locale.getDefault()));
         } catch (IllegalArgumentException | IllegalStateException e) {

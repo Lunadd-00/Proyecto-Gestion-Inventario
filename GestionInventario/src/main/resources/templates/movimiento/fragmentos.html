@@ -36,13 +36,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label>[[#{movimiento.item}]] *</label>
-                                <select class="form-select" name="itemId" id="itemEntrada" required
-                                        onchange="onEntradaItemChange()">
+                                <select class="form-select" name="itemId" id="itemEntrada" required>
                                     <option value="">-- [[#{movimiento.seleccioneItem}]] --</option>
                                     <option th:each="it : ${items}"
                                             th:value="${it.id}"
-                                            th:text="${it.nombre}"
-                                            th:data-caducidad="${it.tieneCaducidad}">
+                                            th:text="${it.nombre}">
                                     </option>
                                 </select>
                             </div>
@@ -70,9 +68,19 @@
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       id="checkCaducidadEntrada"
+                                       onchange="toggleFechaEntrada()"/>
+                                <label class="form-check-label" for="checkCaducidadEntrada">
+                                    [[#{lote.tieneFechaCaducidad}]]
+                                </label>
+                            </div>
+                        </div>
                         <div class="mb-3" id="divFechaCaducidadEntrada" style="display:none">
                             <label>[[#{lote.fechaCaducidad}]]</label>
-                            <input type="date" class="form-control" name="fechaCaducidad"/>
+                            <input type="date" class="form-control" name="fechaCaducidad" id="inputFechaCaducidadEntrada"/>
                         </div>
 
                         <div class="mb-3">
@@ -160,16 +168,16 @@
                                 </small>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label>[[#{movimiento.motivo}]] *</label>
-                                <select class="form-select" name="motivo" required>
-                                    <option value="">-- [[#{movimiento.seleccioneMotivo}]] --</option>
-                                    <option value="Emergencia">[[#{movimiento.motivo.emergencia}]]</option>
-                                    <option value="Actividad">[[#{movimiento.motivo.actividad}]]</option>
-                                    <option value="Simulacro">[[#{movimiento.motivo.simulacro}]]</option>
-                                    <option value="Mantenimiento">[[#{movimiento.motivo.mantenimiento}]]</option>
-                                    <option value="Otro">[[#{movimiento.motivo.otro}]]</option>
-                                </select>
+                                <label>[[#{movimiento.motivo}]]</label>
+                                <input type="text" class="form-control" name="motivo"
+                                       maxlength="255"
+                                       th:placeholder="#{movimiento.motivo.placeholder}"/>
                             </div>
+                        </div>
+
+                        <div class="alert alert-warning py-2 mt-1" id="avisoEliminarLote" style="display:none">
+                            <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                            [[#{movimiento.salida.avisoEliminarLote}]]
                         </div>
 
                         <div class="mb-3">
@@ -194,7 +202,6 @@
 
 
 <!-- ===== MODAL TRANSFERENCIA ===== -->
-<!-- Con caducidad: mueve lote completo. Sin caducidad: elige cantidad (validada). -->
 <section th:fragment="modalTransferencia">
     <div class="modal fade" id="modalTransferencia" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -217,8 +224,7 @@
                                     <option th:each="it : ${items}"
                                             th:if="${it.stock > 0}"
                                             th:value="${it.id}"
-                                            th:text="${it.nombre + ' (Stock: ' + it.stock + ')'}"
-                                            th:data-caducidad="${it.tieneCaducidad}">
+                                            th:text="${it.nombre + ' (Stock: ' + it.stock + ')'}">
                                     </option>
                                 </select>
                             </div>
@@ -243,7 +249,6 @@
                             </select>
                         </div>
 
-                        <!-- Solo visible si el ítem NO tiene caducidad -->
                         <div class="row mb-3" id="cantidadTransferenciaRow" style="display:none">
                             <div class="col-md-6">
                                 <label>[[#{movimiento.cantidad}]] *</label>
@@ -253,7 +258,6 @@
                             </div>
                         </div>
 
-                        <!-- Aviso cuando el lote se moverá completo por tener caducidad -->
                         <div class="alert alert-info py-2" id="infoLoteCompletoTransferencia" style="display:none">
                             <i class="fa-solid fa-circle-info me-1"></i>
                             <span id="textoLoteCompleto"></span>
@@ -268,6 +272,13 @@
                                         th:text="${bodega.nombre}">
                                 </option>
                             </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>[[#{movimiento.motivo}]]</label>
+                            <input type="text" class="form-control" name="motivo"
+                                   maxlength="255"
+                                   th:placeholder="#{movimiento.motivo.placeholder}"/>
                         </div>
 
                         <div class="mb-3">
@@ -418,6 +429,7 @@ function cargarLotes(itemId, bodegaId, selectId, onLoaded) {
                 opt.value = l.id;
                 opt.textContent = label;
                 opt.dataset.cantidad = l.cantidad;
+                opt.dataset.tieneFecha = l.fechaCaducidad ? 'true' : 'false';
                 sel.appendChild(opt);
             });
         }
@@ -427,12 +439,13 @@ function cargarLotes(itemId, bodegaId, selectId, onLoaded) {
     });
 }
 
-// ===== ENTRADA: muestra/oculta fecha caducidad según ítem =====
-function onEntradaItemChange() {
-    var sel = document.getElementById('itemEntrada');
-    var opt = sel.options[sel.selectedIndex];
-    var tieneCaducidad = opt && opt.dataset.caducidad === 'true';
-    document.getElementById('divFechaCaducidadEntrada').style.display = tieneCaducidad ? 'block' : 'none';
+// ===== ENTRADA: muestra/oculta fecha caducidad según checkbox =====
+function toggleFechaEntrada() {
+    var checked = document.getElementById('checkCaducidadEntrada').checked;
+    var div = document.getElementById('divFechaCaducidadEntrada');
+    var input = document.getElementById('inputFechaCaducidadEntrada');
+    div.style.display = checked ? 'block' : 'none';
+    if (!checked) input.value = '';
 }
 
 // ===== SALIDA: carga lotes cuando cambia ítem o bodega =====
@@ -459,39 +472,37 @@ function onTransferenciaChange() {
 
 // ===== TRANSFERENCIA: ajusta UI al seleccionar un lote =====
 function onLoteTransferenciaChange() {
-    var itemSel = document.getElementById('itemTransferencia');
-    var itemOpt = itemSel.options[itemSel.selectedIndex];
-    var tieneCaducidad = itemOpt && itemOpt.dataset.caducidad === 'true';
-
     var loteSel = document.getElementById('loteTransferencia');
     var loteOpt = loteSel.options[loteSel.selectedIndex];
     var cantidad = loteOpt ? loteOpt.dataset.cantidad : '';
+    var tieneFecha = loteOpt && loteOpt.dataset.tieneFecha === 'true';
 
-    var cantRow  = document.getElementById('cantidadTransferenciaRow');
-    var infoDiv  = document.getElementById('infoLoteCompletoTransferencia');
+    var cantRow   = document.getElementById('cantidadTransferenciaRow');
+    var infoDiv   = document.getElementById('infoLoteCompletoTransferencia');
     var cantInput = document.getElementById('cantidadTransferencia');
 
     if (!loteOpt || !loteOpt.value) {
-        cantRow.style.display  = 'none';
-        infoDiv.style.display  = 'none';
+        cantRow.style.display = 'none';
+        infoDiv.style.display = 'none';
         return;
     }
 
-    if (tieneCaducidad) {
-        // Lote completo obligatorio → mostrar aviso, auto-rellenar cantidad
-        cantRow.style.display  = 'none';
+    if (tieneFecha) {
+        cantRow.style.display = 'none';
         cantInput.removeAttribute('required');
-        cantInput.value = cantidad;
-        infoDiv.style.display  = 'block';
+        cantInput.removeAttribute('min');
+        cantInput.removeAttribute('max');
+        cantInput.value = '';
+        infoDiv.style.display = 'block';
         document.getElementById('textoLoteCompleto').textContent =
-            'Este ítem tiene fecha de vencimiento. Se transferirá el lote completo: ' + cantidad + ' unidades.';
+            'Este lote tiene fecha de vencimiento. Se transferirá el lote completo: ' + cantidad + ' unidades.';
     } else {
-        // Transferencia parcial permitida
-        cantRow.style.display  = 'block';
+        cantRow.style.display = 'block';
         cantInput.setAttribute('required', 'required');
+        cantInput.setAttribute('min', '1');
         cantInput.max   = cantidad;
         cantInput.value = '';
-        infoDiv.style.display  = 'none';
+        infoDiv.style.display = 'none';
         document.getElementById('infoMaxTransferencia').textContent = 'Máximo disponible en lote: ' + cantidad;
     }
 }
@@ -513,20 +524,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('infoMaxSalida').textContent = '';
             }
             cantInput.value = '';
+            document.getElementById('avisoEliminarLote').style.display = 'none';
+            document.getElementById('errorStockSalida').style.display = 'none';
+            document.getElementById('btnConfirmarSalida').disabled = false;
         });
 
         // Salida: valida cantidad vs máximo del lote
         document.getElementById('cantidadSalida').addEventListener('input', function() {
             var max = parseInt(this.max) || 0;
             var val = parseInt(this.value) || 0;
-            var err = document.getElementById('errorStockSalida');
-            var btn = document.getElementById('btnConfirmarSalida');
+            var err   = document.getElementById('errorStockSalida');
+            var aviso = document.getElementById('avisoEliminarLote');
+            var btn   = document.getElementById('btnConfirmarSalida');
             if (max > 0 && val > max) {
-                err.style.display = 'block';
+                err.style.display   = 'block';
+                aviso.style.display = 'none';
                 btn.disabled = true;
             } else {
                 err.style.display = 'none';
                 btn.disabled = false;
+                aviso.style.display = (max > 0 && val === max) ? 'block' : 'none';
             }
         });
     }

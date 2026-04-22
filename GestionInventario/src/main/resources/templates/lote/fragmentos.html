@@ -131,16 +131,7 @@
                                         <span th:if="${lote.activo}" class="badge bg-success">Activo</span>
                                         <span th:unless="${lote.activo}" class="badge bg-secondary">Inactivo</span>
                                     </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#confirmModalLote"
-                                                th:data-bs-id="${lote.id}"
-                                                th:data-bs-item="${item.id}"
-                                                th:data-bs-nombre="${lote.numeroLote != null ? lote.numeroLote : 'Lote #' + lote.id}">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -154,49 +145,4 @@
     </div>
 </section>
 
-<!-- Modal confirmar eliminar -->
-<section th:fragment="confirmarEliminarLote">
-    <div class="modal fade" id="confirmModalLote" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form th:action="@{/lote/eliminar}" method="post">
-                    <input type="hidden" name="idLote" id="modalLoteId"/>
-                    <input type="hidden" name="itemId" id="modalLoteItemId"/>
-                    <div class="modal-header bg-warning text-white">
-                        <h5 class="modal-title">
-                            <i class="fa-solid fa-circle-radiation"></i> [[#{accion.confirmar}]]
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>[[#{accion.confirmar.texto1}]] <strong id="modalLoteNombre"></strong>?</p>
-                        <p class="text-warning">[[#{lote.advertencia.eliminar}]]</p>
-                        <h6>[[#{accion.confirmar.texto2}]]</h6>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
-                        </button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
-
-<th:block th:fragment="scriptLote">
-    <script>
-        var confirmModalLote = document.getElementById('confirmModalLote');
-        if (confirmModalLote) {
-            confirmModalLote.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                document.getElementById('modalLoteId').value = button.getAttribute('data-bs-id');
-                document.getElementById('modalLoteItemId').value = button.getAttribute('data-bs-item');
-                document.getElementById('modalLoteNombre').textContent = button.getAttribute('data-bs-nombre');
-            });
-        }
-    </script>
-</th:block>
+<th:block th:fragment="scriptLote"></th:block>

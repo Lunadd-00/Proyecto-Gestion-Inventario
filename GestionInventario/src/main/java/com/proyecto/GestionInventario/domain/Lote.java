@@ -20,7 +20,7 @@ public class Lote implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "numero_lote", length = 100)
+    @Column(name = "numero_lote", length = 100, unique = true)
     private String numeroLote;
 
     @Column(nullable = false)

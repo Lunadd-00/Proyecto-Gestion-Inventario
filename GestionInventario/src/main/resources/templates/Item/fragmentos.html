@@ -92,22 +92,6 @@
                         <div class="mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox"
-                                       id="tieneCaducidadNuevo" name="tieneCaducidad"
-                                       onchange="toggleFecha('tieneCaducidadNuevo', 'divFechaNuevo')"/>
-                                <label class="form-check-label" for="tieneCaducidadNuevo">
-                                    [[#{item.tieneCaducidad}]]
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="mb-3" id="divFechaNuevo" style="display:none">
-                            <label>[[#{item.fechaCaducidad}]] *</label>
-                            <input type="date" class="form-control" name="fechaCaducidad"/>
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox"
                                        id="activoNuevo" name="activo" checked/>
                                 <label class="form-check-label" for="activoNuevo">[[#{item.activo}]]</label>
                             </div>
@@ -340,24 +324,6 @@
                                 </select>
                                 <small class="text-danger" th:if="${#fields.hasErrors('unidadMedida')}" th:errors="*{unidadMedida}"></small>
                             </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox"
-                                       id="tieneCaducidadEdit" th:field="*{tieneCaducidad}"
-                                       onchange="toggleFecha('tieneCaducidadEdit', 'divFechaEdit')"/>
-                                <label class="form-check-label" for="tieneCaducidadEdit">
-                                    [[#{item.tieneCaducidad}]]
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="mb-3" id="divFechaEdit"
-                             th:style="${item.tieneCaducidad} ? 'display:block' : 'display:none'">
-                            <label>[[#{item.fechaCaducidad}]] *</label>
-                            <input type="date" class="form-control" th:field="*{fechaCaducidad}"/>
-                            <small class="text-danger" th:if="${#fields.hasErrors('fechaCaducidad')}" th:errors="*{fechaCaducidad}"></small>
                         </div>
 
                         <div class="mb-3">

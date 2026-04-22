@@ -31,8 +31,6 @@ public class ReporteController {
         return "/reporte/listado";
     }
 
-    // ─── PDF ───────────────────────────────────
-
     @GetMapping("/pdf/inventario")
     public ResponseEntity<byte[]> pdfInventario(@AuthenticationPrincipal UserDetails user) {
         byte[] bytes = reporteService.generarInventarioPdf(user.getUsername());
@@ -63,8 +61,6 @@ public class ReporteController {
         return descargar(bytes, "Reporte_Stock_Bajo_" + hoy() + ".pdf", "application/pdf");
     }
 
-    // ─── Excel ─────────────────────────────────
-
     @GetMapping("/excel/inventario")
     public ResponseEntity<byte[]> excelInventario() {
         byte[] bytes = reporteService.generarInventarioExcel();
@@ -85,8 +81,6 @@ public class ReporteController {
         byte[] bytes = reporteService.generarReporteCompletoExcel();
         return descargar(bytes, "Reporte_Completo_" + hoy() + ".xlsx", excel());
     }
-
-    // ─── Helpers ───────────────────────────────
 
     private String hoy() {
         return LocalDate.now().format(FMT);

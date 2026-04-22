@@ -1,9 +1,11 @@
 package com.proyecto.GestionInventario.service;
 
+import com.proyecto.GestionInventario.domain.ConfiguracionAlerta;
 import com.proyecto.GestionInventario.domain.Item;
 import com.proyecto.GestionInventario.repository.ItemRepository;
 import jakarta.mail.MessagingException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.slf4j.Logger;
@@ -21,20 +23,37 @@ public class AlertaService {
 
     private final ItemRepository itemRepository;
     private final CorreoService correoService;
+    private final ConfiguracionAlertaService configuracionService;
 
     @Value("${alerta.correo.admin}")
     private String correoAdmin;
 
-    public AlertaService(ItemRepository itemRepository, CorreoService correoService) {
+    public AlertaService(ItemRepository itemRepository,
+            CorreoService correoService,
+            ConfiguracionAlertaService configuracionService) {
         this.itemRepository = itemRepository;
         this.correoService = correoService;
+        this.configuracionService = configuracionService;
     }
 
-    // HU-13: alerta vencimiento — diariamente a las 8:00 AM
-    @Scheduled(cron = "0 0 8 * * *")
+    @Scheduled(cron = "0 * * * * *")
+    public void verificarYEnviarAlertas() {
+        ConfiguracionAlerta config = configuracionService.getConfiguracion();
+        LocalTime ahora = LocalTime.now();
+        int hora   = ahora.getHour();
+        int minuto = ahora.getMinute();
+
+        if (hora == config.getHoraVencimiento() && minuto == config.getMinutoVencimiento()) {
+            alertarVencimientoProximo();
+        }
+        if (hora == config.getHoraStock() && minuto == config.getMinutoStock()) {
+            alertarStockMinimo();
+        }
+    }
+
     @Transactional(readOnly = true)
     public void alertarVencimientoProximo() {
-        LocalDate hoy = LocalDate.now();
+        LocalDate hoy    = LocalDate.now();
         LocalDate limite = hoy.plusDays(30);
 
         List<Item> items = itemRepository.findAll().stream()
@@ -56,8 +75,6 @@ public class AlertaService {
         }
     }
 
-    // HU-14: alerta stock mínimo — diariamente a las 8:00 AM
-    @Scheduled(cron = "0 5 8 * * *")
     @Transactional(readOnly = true)
     public void alertarStockMinimo() {
         List<Item> items = itemRepository.findAll().stream()
@@ -79,7 +96,7 @@ public class AlertaService {
     private String construirHtmlVencimiento(List<Item> items, LocalDate hoy) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html><body style='font-family:Arial,sans-serif;'>");
-        sb.append("<h2 style='color:#e65c00;'>⚠️ Ítems próximos a vencer</h2>");
+        sb.append("<h2 style='color:#1cb6b8;'>⚠️ Ítems próximos a vencer</h2>");
         sb.append("<p>Los siguientes ítems vencerán en los próximos <strong>30 días</strong>:</p>");
         sb.append("<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse;width:100%;'>");
         sb.append("<thead style='background:#f5a623;color:white;'>");
@@ -90,7 +107,7 @@ public class AlertaService {
             String color = dias <= 7 ? "#ffd6d6" : "#fff9e6";
             sb.append("<tr style='background:").append(color).append(";'>");
             sb.append("<td>").append(i.getNombre()).append("</td>");
-            sb.append("<td>").append(i.getCategoria().getNombre()).append("</td>");
+            sb.append("<td>").append(i.getCategoria() != null ? i.getCategoria().getNombre() : "—").append("</td>");
             sb.append("<td>").append(i.getStock()).append(" ").append(i.getUnidadMedida()).append("</td>");
             sb.append("<td>").append(i.getFechaCaducidad().format(FMT)).append("</td>");
             sb.append("<td><strong>").append(dias).append(" días</strong></td>");
@@ -105,18 +122,18 @@ public class AlertaService {
     private String construirHtmlStockBajo(List<Item> items) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html><body style='font-family:Arial,sans-serif;'>");
-        sb.append("<h2 style='color:#c0392b;'>🔴 Ítems con stock mínimo o agotado</h2>");
+        sb.append("<h2 style='color:#f86828;'>🔴 Ítems con stock mínimo o agotado</h2>");
         sb.append("<p>Los siguientes ítems requieren reabastecimiento:</p>");
-        sb.append("<table border='1' cellpadding='6' cellspacing='0' style='border-collapse:collapse;width:100%;'>");
-        sb.append("<thead style='background:#c0392b;color:white;'>");
-        sb.append("<tr><th>Ítem</th><th>Categoría</th><th>Proveedor</th><th>Stock Actual</th><th>Stock Mínimo</th></tr>");
-        sb.append("</thead><tbody>");
+        sb.append("<table border='0' cellpadding='8' cellspacing='0' style='border-collapse:collapse;width:100%;'>");
+        sb.append("<thead><tr style='background:#f86828;color:white;'>");
+        sb.append("<th>Ítem</th><th>Categoría</th><th>Proveedor</th><th>Stock Actual</th><th>Stock Mínimo</th>");
+        sb.append("</tr></thead><tbody>");
         for (Item i : items) {
             String color = i.getStock() == 0 ? "#ffd6d6" : "#fff3cd";
             sb.append("<tr style='background:").append(color).append(";'>");
             sb.append("<td>").append(i.getNombre()).append("</td>");
-            sb.append("<td>").append(i.getCategoria().getNombre()).append("</td>");
-            sb.append("<td>").append(i.getProveedor().getNombre()).append("</td>");
+            sb.append("<td>").append(i.getCategoria() != null ? i.getCategoria().getNombre() : "—").append("</td>");
+            sb.append("<td>").append(i.getProveedor() != null ? i.getProveedor().getNombre() : "—").append("</td>");
             sb.append("<td><strong>").append(i.getStock()).append("</strong></td>");
             sb.append("<td>").append(i.getStockMinimo()).append("</td>");
             sb.append("</tr>");

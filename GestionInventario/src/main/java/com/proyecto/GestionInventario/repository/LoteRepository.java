@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LoteRepository extends JpaRepository<Lote, Long> {
 
+    boolean existsByNumeroLote(String numeroLote);
+
     List<Lote> findByItemIdOrderByFechaIngresoDesc(Long itemId);
 
     List<Lote> findByItemIdAndBodegaIdAndActivoTrueOrderByFechaIngresoAsc(Long itemId, Long bodegaId);
