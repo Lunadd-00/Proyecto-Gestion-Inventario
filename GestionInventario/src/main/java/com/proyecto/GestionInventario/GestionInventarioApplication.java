@@ -1,3 +1,4 @@
+
 package com.proyecto.GestionInventario;
 
 import org.springframework.boot.SpringApplication;
