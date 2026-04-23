@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import java.util.Locale;
 import java.util.Optional;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -96,11 +97,14 @@ public class ItemController {
             item.setBodega(null);
         }
 
-        itemService.save(item);
-        redirectAttributes.addFlashAttribute(
-                "todoOk",
-                messageSource.getMessage("mensaje.actualizado", null, Locale.getDefault())
-        );
+        try {
+            itemService.save(item);
+            redirectAttributes.addFlashAttribute("todoOk",
+                    messageSource.getMessage("mensaje.actualizado", null, Locale.getDefault()));
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("item.error.inactivoConLotes", null, Locale.getDefault()));
+        }
         return "redirect:/item/listado";
     }
 
@@ -131,7 +135,7 @@ public class ItemController {
         } catch (IllegalArgumentException e) {
             titulo = "error";
             detalle = "item.error01";
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | DataIntegrityViolationException e) {
             titulo = "error";
             detalle = "item.error02";
         } catch (Exception e) {

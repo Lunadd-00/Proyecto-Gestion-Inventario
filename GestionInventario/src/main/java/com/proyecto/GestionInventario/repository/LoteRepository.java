@@ -4,6 +4,7 @@ import com.proyecto.GestionInventario.domain.Lote;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,10 @@ public interface LoteRepository extends JpaRepository<Lote, Long> {
     boolean existsByNumeroLote(String numeroLote);
 
     List<Lote> findByItemIdOrderByFechaIngresoDesc(Long itemId);
+
+    @Modifying
+    @Query("DELETE FROM Lote l WHERE l.item.id = :itemId")
+    void deleteByItemId(@Param("itemId") Long itemId);
 
     List<Lote> findByItemIdAndBodegaIdAndActivoTrueOrderByFechaIngresoAsc(Long itemId, Long bodegaId);
 
